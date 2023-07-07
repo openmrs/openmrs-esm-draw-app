@@ -10,8 +10,8 @@ on:
       - created
 
 env:
-  ESM_NAME: "@openmrs/esm-template-app"
-  JS_NAME: "openmrs-esm-template-app.js"
+  ESM_NAME: "@openmrs/esm-draw-app"
+  JS_NAME: "openmrs-esm-draw-app.js"
 
 jobs:
   build:
@@ -25,7 +25,7 @@ jobs:
           node-version: "18.x"
       - run: yarn install --immutable
       - run: yarn verify
-      - run: yarn build
+      - run: yarn turbo build
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
