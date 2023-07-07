@@ -7,7 +7,7 @@
   "extensions": [],
   "pages": [
     {
-      "component": "root",
+      "component": "drawPage",
       "route": "draw"
     }
   ]

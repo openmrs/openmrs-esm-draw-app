@@ -4,7 +4,7 @@ import { configSchema } from "./config-schema";
 const moduleName = "@openmrs/esm-draw-app";
 
 const options = {
-  featureName: "hello-world",
+  featureName: "draw",
   moduleName,
 };
 
@@ -20,6 +20,6 @@ export function startupApp() {
 }
 
 export const root = getAsyncLifecycle(
-  () => import("./root.component"),
+  () => import("./draw-page.component"),
   options
 );
