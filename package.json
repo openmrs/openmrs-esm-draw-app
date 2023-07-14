@@ -46,7 +46,8 @@
   "dependencies": {
     "@carbon/react": "^1.33.0",
     "lodash-es": "^4.17.21",
-    "react-image-annotate": "^1.8.0"
+    "react-image-annotate": "^1.8.0",
+    "svg.js": "^2.7.1"
   },
   "peerDependencies": {
     "@openmrs/esm-framework": "*",

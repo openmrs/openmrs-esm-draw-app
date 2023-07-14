@@ -5,7 +5,7 @@ const moduleName = "@openmrs/esm-draw-app";
 
 const options = {
   featureName: "draw",
-  moduleName,
+  moduleName: "@openmrs/esm-draw-app",
 };
 
 export const importTranslation = require.context(

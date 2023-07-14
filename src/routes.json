@@ -7,8 +7,10 @@
   "extensions": [],
   "pages": [
     {
-      "component": "drawPage",
-      "route": "draw"
+      "component": "root",
+      "route": "draw",
+      "online": true,
+      "offline": true
     }
   ]
 }

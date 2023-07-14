@@ -5044,6 +5044,7 @@ __metadata:
     react-image-annotate: ^1.8.0
     react-router-dom: ^6.14.1
     rxjs: ^6.6.7
+    svg.js: ^2.7.1
     swc-loader: ^0.2.3
     turbo: ^1.10.7
     typescript: ^4.9.5
@@ -21777,6 +21778,13 @@ __metadata:
   dependencies:
     jsep: ^0.3.4
   checksum: 6f1c217b7badb3ebcedd53d10a0f1e06929893d6fce47799502071973a90af555ae7dda82c7b52401ce210c6943f81116c97d6a652f427e9c8dd278e7b45ace8
+  languageName: node
+  linkType: hard
+
+"svg.js@npm:^2.7.1":
+  version: 2.7.1
+  resolution: "svg.js@npm:2.7.1"
+  checksum: 945bfc9623985fefb4c7275a1b98b5168e5857291f46cbd299bd2e14ce7f4428fea6569c7446d37b75694c43dea01a5f179fbce4f770e7dcd136117bb8f1a3f3
   languageName: node
   linkType: hard
 
