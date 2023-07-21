@@ -1,19 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import SVG from "svg.js";
 import DrawingWidget from "./components/drawing-widget/drawing-widget.component";
 
-const DrawPage: React.FC = () => {
-  const handleSaveAnnotations = (state) => {
-    //TODO:handle the serialized diagram on save
-    // Create an SVG element
-    const svg = SVG("drawing").size(500, 500);
+interface RegionData {
+  x: number;
+  y: number;
+}
 
-    // Serialize the object to SVG
-    const serializedSvg = state.toSVG();
+interface ImageData {
+  src: string;
+  name: string;
+  regions: RegionData[];
+}
+
+const DrawPage: React.FC = () => {
+  // Rest of the component code remains the same as in the previous example
+
+  const [serializedAnnotations, setSerializedAnnotations] =
+    useState<string>("");
+
+  const handleSaveAnnotations = (annotations: ImageData[]) => {
+    // TODO: Handle the serialized diagram on save (if needed)
+    // Serialize the annotations to SVG (or any other format)
+    const serializedSvg = annotationsToSVG(annotations);
+    setSerializedAnnotations(serializedSvg);
     // Perform actions with the serialized SVG markup, such as saving or processing it
     // eslint-disable-next-line no-console
+    console.log("Serialized SVG:", serializedSvg);
   };
-  // Add draw page component implementation here
+
+  const annotationsToSVG = (annotations: ImageData[]) => {
+    // Implement the logic to convert the annotations data to SVG format
+    // For demonstration purposes, we'll just return a placeholder string here
+    return "<svg><rect x='10' y='10' width='100' height='50' /></svg>";
+  };
 
   return (
     <div>
@@ -21,11 +41,14 @@ const DrawPage: React.FC = () => {
       <DrawingWidget
         selectedImage={""}
         taskDescription={""}
-        images={[]}
+        imagesData={[]}
         onExit={handleSaveAnnotations}
       />
-      {/* Add  draw page content and components here */}
-      <svg id="drawing" />
+      {/* Add draw page content and components here */}
+      <svg id="drawing">
+        {/* Render the serialized annotations */}
+        <div dangerouslySetInnerHTML={{ __html: serializedAnnotations }} />
+      </svg>
     </div>
   );
 };
