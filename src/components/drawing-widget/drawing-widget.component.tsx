@@ -1,9 +1,6 @@
-import React, { useState } from "react";
-import ReactImageAnnotate from "react-image-annotate";
-import {
-  createAttachment,
-  getAttachmentByUuid,
-} from "../../attachments/attachments.resource"; // Import the createAttachment function from attachments.resource.tsx
+import React, { useState, useEffect, useCallback } from "react";
+import ReactImageAnnotate, { Annotation } from "react-image-annotate";
+import { Add, Crop } from "@carbon/react/icons";
 
 /* The `interface RegionData` is defining the structure of an object that represents the coordinates of
 a region in an image. It has two properties: `x` and `y`, which are both of type `number`. These
@@ -37,56 +34,73 @@ component called `DrawingWidget` that takes in props of type `DrawingWidgetProps
 const DrawingWidget: React.FC<DrawingWidgetProps> = ({ onExit }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [annotations, setAnnotations] = useState<ImageData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [activeImage, setActiveImage] = useState<ImageData | null>(null);
 
-  const handleExit = () => {
-    // Perform actions with the state data, such as saving or processing annotations
+  const CreatePointIcon = () => <Add />;
+  const CreateBoxIcon = () => <Crop />;
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let isMounted = true;
+    const selectedImageURLParam = new URLSearchParams(
+      window.location.search
+    ).get("image-url");
+    if (selectedImageURLParam) {
+      // Create the activeImage object using the selectedImageURLParam and set it as the active image
+      const activeImage: ImageData = {
+        src: selectedImageURLParam,
+        name: "Image from URL",
+        regions: [], // You can provide the regions
+      };
+      setActiveImage(activeImage);
+      setLoading(false);
+    } else {
+      // If there's no selectedImageURLParam, set loading to false without any active image
+      setLoading(false);
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (activeImage) {
+      const initialAnnotations: ImageData[] = [
+        {
+          ...activeImage,
+          regions: activeImage.regions || [],
+        },
+      ];
+      setAnnotations(initialAnnotations);
+    }
+  }, [activeImage]);
+
+  const handleExit = useCallback(() => {
     onExit(annotations);
   };
 
-  /**
-   * The function `handleAnnotationChange` updates the state variable `annotations` with a new array of
-   * `ImageData` objects.
-   * @param {ImageData[]} newAnnotations - The `newAnnotations` parameter is an array of `ImageData`
-   * objects.
-   */
-  const handleAnnotationChange = (newAnnotations: ImageData[]) => {
-    setAnnotations(newAnnotations);
-  };
+  const handleAnnotationChange = useCallback((newAnnotations: Annotation[]) => {
+    setAnnotations((prevAnnotations) =>
+      prevAnnotations.map((prevAnnotation, index) =>
+        index === 0
+          ? { ...prevAnnotation, regions: newAnnotations }
+          : prevAnnotation
+      )
+    );
+  }, []);
 
-  /**
-   * The function `handleUploadAttachment` is used to upload an attachment by making an API request and
-   * handling success or error accordingly.
-   */
-  const handleUploadAttachment = async () => {
-    if (selectedFile) {
-      try {
-        // Perform an API request to upload the attachment using createAttachment function
-        await createAttachment("patientUuid", {
-          file: selectedFile,
-          base64Content: "",
-          fileName: "",
-          fileType: "",
-          fileDescription: "",
-        });
-        // Handle success or update the UI accordingly
-      } catch (error) {
-        // Handle error or show error message to the user
-      }
+  useEffect(() => {
+    if (selectedImage) {
+      const image: ImageData = {
+        src: selectedImage,
+        name: "Selected Image",
+        regions: [],
+      };
+      setActiveImage(image);
     }
-  };
-
-  const handleDownloadAttachment = async (attachmentId: string) => {
-    try {
-      // Perform an API request to retrieve the attachment using getAttachmentByUuid function
-      const response = await getAttachmentByUuid(
-        attachmentId,
-        new AbortController()
-      );
-      // Handle success or open/download the attachment in the browser
-    } catch (error) {
-      // Handle error or show error message to the user
-    }
-  };
+  }, [selectedImage]);
 
   /* The `const images: ImageData[] = selectedFile ? [...] : [];` statement is creating an array of
   `ImageData` objects based on the value of the `selectedFile` state variable. */
@@ -109,16 +123,23 @@ const DrawingWidget: React.FC<DrawingWidgetProps> = ({ onExit }) => {
 
   return (
     <div className="drawing-widget">
-      <ReactImageAnnotate
-        labelImages
-        regionClsList={["Alpha", "Beta", "Charlie", "Delta"]}
-        regionTagList={["tag1", "tag2", "tag3"]}
-        images={images}
-        onExit={handleExit}
-        onUploadAttachment={handleUploadAttachment}
-        onDownloadAttachment={handleDownloadAttachment}
-        onChange={handleAnnotationChange}
-      />
+      {activeImage || selectedFile ? (
+        <ReactImageAnnotate
+          labelImages
+          regionClsList={["Alpha", "Beta", "Charlie", "Delta"]}
+          regionTagList={["tag1", "tag2", "tag3"]}
+          images={images}
+          onExit={handleExit}
+          onChange={handleAnnotationChange}
+          allowComments={true}
+          toolIcons={{
+            "create-point": CreatePointIcon,
+            "create-box": CreateBoxIcon,
+          }}
+        />
+      ) : (
+        <div>No image to display.</div>
+      )}
       <input
         type="file"
         onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}

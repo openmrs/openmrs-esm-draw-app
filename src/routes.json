@@ -10,7 +10,7 @@
       "component": "root",
       "route": "draw",
       "online": true,
-      "offline": true
+      "offline": false
     }
   ]
 }
