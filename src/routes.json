@@ -8,7 +8,9 @@
   "pages": [
     {
       "component": "root",
-      "route": "draw"
+      "route": "draw",
+      "online": true,
+      "offline": false
     }
   ]
 }
