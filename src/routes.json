@@ -7,8 +7,10 @@
   "extensions": [],
   "pages": [
     {
-      "component": "root",
-      "route": "draw"
+      "component": "DrawPage",
+      "route": "draw/:patientUuid",
+      "online": true,
+      "offline": true
     }
   ]
 }
