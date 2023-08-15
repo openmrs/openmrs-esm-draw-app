@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ReactImageAnnotate, { Annotation } from "react-image-annotate";
 import { Add, Crop } from "@carbon/react/icons";
-import { useTranslation } from 'react-i18next';
-import { CardHeader } from '@openmrs/esm-patient-common-lib';
-import { Button } from '@carbon/react';
+import { useTranslation } from "react-i18next";
+import { CardHeader } from "@openmrs/esm-patient-common-lib";
+import { Button } from "@carbon/react";
 
 
 interface RegionData {
@@ -54,9 +54,6 @@ const DrawingWidget: React.FC<DrawingWidgetProps> = ({ onExit }) => {
     } else {
       setLoading(false);
     }
-
-    return () => {
-    };
   }, []);
 
   useEffect(() => {

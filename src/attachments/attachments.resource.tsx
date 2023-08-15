@@ -85,4 +85,4 @@ export function deleteAttachmentPermanently(
     method: "DELETE",
     signal: abortController.signal,
   });
-}
+};

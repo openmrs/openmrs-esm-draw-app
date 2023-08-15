@@ -5,6 +5,7 @@ export interface UploadedFile {
   fileType: string;
   fileDescription: string;
   status?: "uploading" | "complete";
+  
 }
   
 export interface Attachment {
@@ -15,6 +16,7 @@ export interface Attachment {
   dateTime: string;
   bytesMimeType: string;
   bytesContentFamily: string;
+
 }
 export interface AttachmentResponse {
   bytesContentFamily: string;
@@ -22,4 +24,5 @@ export interface AttachmentResponse {
   comment: string;
   dateTime: string;
   uuid: string;
+
 }
