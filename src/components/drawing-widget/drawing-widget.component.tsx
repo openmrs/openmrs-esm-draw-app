@@ -29,9 +29,9 @@ interface DrawingWidgetProps {
 
 const DrawingWidget: React.FC<DrawingWidgetProps> = ({ onExit }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage] = useState<string | null>(null);
   const [annotations, setAnnotations] = useState<ImageData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [, setLoading] = useState<boolean>(true);
   const [activeImage, setActiveImage] = useState<ImageData | null>(null);
   const { t } = useTranslation();
  
@@ -40,7 +40,6 @@ const DrawingWidget: React.FC<DrawingWidgetProps> = ({ onExit }) => {
   const CreateBoxIcon = () => <Crop />;
 
   useEffect(() => {
-    let isMounted = true;
     const selectedImageURLParam = new URLSearchParams(
       window.location.search
     ).get("image-url");
@@ -57,7 +56,6 @@ const DrawingWidget: React.FC<DrawingWidgetProps> = ({ onExit }) => {
     }
 
     return () => {
-      isMounted = false;
     };
   }, []);
 
