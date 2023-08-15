@@ -8,15 +8,13 @@ import { useParams } from 'react-router-dom';
 import html2canvas from "html2canvas";
 
 const DrawPage: React.FC = () => {
-  const [selectedImage] = useState<string | null>(null);
+
   const { patientUuid } = useParams();
   useTranslation();
-  const [activeImage, setActiveImage] = useState<ImageData | null>(null);
+  const [activeImage] = useState<ImageData | null>(null);
   const drawingWidgetRef = useRef<HTMLDivElement>(null);
 
-  const handleSaveAnnotations = async (annotations: ImageData[]) => {
-    // Serialize the annotations to SVG
-    const serializedSvg = annotationsToSVG(annotations);
+  const handleSaveAnnotations = async () => {
 
     // Convert SVG to PNG using html2canvas
     if (drawingWidgetRef.current) {
@@ -45,19 +43,6 @@ const DrawPage: React.FC = () => {
     // Display the serialized SVG or PNG.
   };
 
-  const annotationsToSVG = (annotations: ImageData[]) => {
-    // using the first region's x, y, width, and height
-    const firstRegion = annotations[0]?.regions[0];
-    if (firstRegion) {
-      const { x, y } = firstRegion;
-      const width = 100;
-      const height = 50;
-      return `<svg><rect x="${x}" y="${y}" width="${width}" height="${height}" /></svg>`;
-    }
-
-    // Return an empty SVG if no annotations are available
-    return "<svg></svg>";
-  };
 
   return (
     <div>
