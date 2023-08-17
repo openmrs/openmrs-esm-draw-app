@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ReactImageAnnotate, { Annotation } from "react-image-annotate";
-import { Add, Crop } from "@carbon/react/icons";
+import { Add } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
 import { CardHeader } from "@openmrs/esm-patient-common-lib";
 import { Button } from "@carbon/react";
-
+import { RegionClass, RegionTag } from "../../constants";
 
 interface RegionData {
   type: string;
@@ -25,119 +25,113 @@ interface DrawingWidgetProps {
   regionClsList?: string[];
   enabledTools?: string[];
   onExit: (annotations: ImageData[]) => void;
+  drawingWidgetRef: React.RefObject<HTMLDivElement>;
 }
 
-const DrawingWidget: React.FC<DrawingWidgetProps> = ({ onExit }) => {
+const sendAnnotatedImageUrl = (
+  callbackName: string,
+  annotatedImageUrl: string
+): void => {
+  if (
+    callbackName &&
+    window.opener &&
+    typeof window.opener[callbackName] === "function"
+  ) {
+    window.opener[callbackName](annotatedImageUrl);
+  }
+};
+
+const DrawingWidget: React.FC<DrawingWidgetProps> = ({ drawingWidgetRef }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedImage] = useState<string | null>(null);
-  const [annotations, setAnnotations] = useState<ImageData[]>([]);
-  const [, setLoading] = useState<boolean>(true);
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [activeImage, setActiveImage] = useState<ImageData | null>(null);
   const { t } = useTranslation();
- 
-
-  const CreatePointIcon = () => <Add />;
-  const CreateBoxIcon = () => <Crop />;
 
   useEffect(() => {
-    const selectedImageURLParam = new URLSearchParams(
-      window.location.search
-    ).get("image-url");
-    if (selectedImageURLParam) {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const imageUrl = urlSearchParams.get("imageUrl");
+
+    if (imageUrl) {
       const activeImage: ImageData = {
-        src: selectedImageURLParam,
+        src: imageUrl,
         name: "Image from URL",
         regions: [],
       };
       setActiveImage(activeImage);
-      setLoading(false);
-    } else {
-      setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    if (activeImage) {
-      const initialAnnotations: ImageData[] = [
-        {
-          ...activeImage,
-          regions: activeImage.regions || [],
-        },
-      ];
-      setAnnotations(initialAnnotations);
-    }
-  }, [activeImage]);
-
   const handleExit = useCallback(() => {
-    onExit(annotations);
-  }, [onExit, annotations]);
-
-  const handleAnnotationChange = useCallback(
-    (newAnnotations: Annotation[]) => {
-      setAnnotations((prevAnnotations) =>
-        prevAnnotations.map((prevAnnotation, index) =>
-          index === 0
-            ? { ...prevAnnotation, regions: newAnnotations }
-            : prevAnnotation
-        )
-      );
-    },
-    []
-  );
-
-  useEffect(() => {
-    if (selectedImage) {
-      const image: ImageData = {
-        src: selectedImage,
-        name: "Selected Image",
-        regions: [],
-      };
-      setActiveImage(image);
+    if (drawingWidgetRef.current) {
+      const canvas = drawingWidgetRef.current.querySelector("canvas");
+      if (canvas) {
+        const annotatedImageUrl = canvas.toDataURL("image/png");
+        const callbackName = new URLSearchParams(window.location.search).get(
+          "callback"
+        );
+        sendAnnotatedImageUrl(callbackName, annotatedImageUrl);
+        window.close();
+      } else {
+        console.error("Canvas element not found.");
+      }
     }
-  }, [selectedImage]);
+  }, [drawingWidgetRef]);
+
+  const handleAnnotationChange = useCallback((newAnnotations: Annotation[]) => {
+    setAnnotations(newAnnotations);
+  }, []);
 
   const images: ImageData[] = selectedFile
     ? [
         {
           src: URL.createObjectURL(selectedFile),
           name: selectedFile.name,
-          regions: [
-            {  type: "point", x: 100, y: 150 },
-            {  type: "point", x: 200, y: 250 },
-          ],
+          regions: [],
         },
       ]
     : [];
+
+  const handleAddDiagram = () => {
+    if (selectedFile) {
+      const newDiagram: ImageData = {
+        src: URL.createObjectURL(selectedFile),
+        name: selectedFile.name,
+        regions: [],
+      };
+      setActiveImage(newDiagram);
+      setSelectedFile(null);
+    }
+  };
 
   return (
     <div className="drawing-widget">
       {activeImage || selectedFile ? (
         <ReactImageAnnotate
           labelImages
-          regionClsList={["Alpha", "Beta", "Charlie", "Delta"]}
-          regionTagList={["tag1", "tag2", "tag3"]}
+          regionClsList={Object.values(RegionClass)} // Use enum values
+          regionTagList={Object.values(RegionTag)} // Use enum values
           images={images}
           onExit={handleExit}
           onChange={handleAnnotationChange}
           allowComments={true}
-          toolIcons={{
-            "create-point": CreatePointIcon,
-            "create-box": CreateBoxIcon,
-          }}
         />
       ) : (
         <div>No image to display.</div>
       )}
-        <CardHeader title={t('Add Diagram', 'add diagram')}>
-          <input
-            type="file"
-            onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-          />
-
-        <Button kind="ghost" renderIcon={Add} iconDescription="Add attachment">
-                {t('add', 'Add')}
+      <CardHeader title={t("Add Diagram", "add diagram")}>
+        <input
+          type="file"
+          onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+        />
+        <Button
+          kind="ghost"
+          renderIcon={Add}
+          iconDescription="Add diagram"
+          onClick={handleAddDiagram}
+        >
+          {t("add", "Add")}
         </Button>
-        </CardHeader>
+      </CardHeader>
     </div>
   );
 };

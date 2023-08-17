@@ -71,7 +71,7 @@ export async function createAttachment(
     );
     formData.append("base64Content", fileToUpload.base64Content);
   }
-  return openmrsFetch(`${attachmentUrl}`, {
+  return openmrsFetch(attachmentUrl, {
     method: "POST",
     body: formData,
   });
@@ -85,4 +85,4 @@ export function deleteAttachmentPermanently(
     method: "DELETE",
     signal: abortController.signal,
   });
-};
+}

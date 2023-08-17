@@ -8,7 +8,7 @@
   "pages": [
     {
       "component": "DrawPage",
-      "route": "draw/:patientUuid",
+      "route": "draw",
       "online": true,
       "offline": true
     }
