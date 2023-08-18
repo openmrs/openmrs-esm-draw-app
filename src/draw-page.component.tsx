@@ -6,12 +6,24 @@ import DrawingWidget, {
 import { createAttachment } from "./attachments/attachments.resource";
 import { useParams } from "react-router-dom";
 import html2canvas from "html2canvas";
+import DiagramTemplateDropdown, {
+  DiagramTemplate,
+} from "./components/templates/diagram-template.component";
+import DiagramTable from "./components/saveddiagrams/diagram-table.component";
 
 const DrawPage: React.FC = () => {
   const { patientUuid } = useParams();
   const { t } = useTranslation();
   const [activeImage, setActiveImage] = useState<ImageData | null>(null);
   const drawingWidgetRef = useRef<HTMLDivElement>(null);
+  const [savedDiagrams, setSavedDiagrams] = useState([]);
+  const [diagramTemplates, setDiagramTemplates] = useState<DiagramTemplate[]>(
+    []
+  );
+
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<DiagramTemplate | null>(null);
 
   const handleSaveAnnotations = async () => {
     // Convert SVG to PNG using html2canvas
@@ -55,6 +67,69 @@ const DrawPage: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    // Replace this with your actual data fetching logic
+    const fetchDiagrams = async () => {
+      try {
+        const response = await fetch("api-endpoint-here");
+        const data = await response.json();
+        setSavedDiagrams(data);
+      } catch (error) {
+        console.error("Error fetching diagrams:", error);
+      }
+    };
+
+    fetchDiagrams();
+  }, []);
+
+  const exampleDiagramTemplates: DiagramTemplate[] = [
+    {
+      id: "1",
+      name: "Lower Limb (LL) - Right",
+      region: "Lower Limb - Right", // Example region name
+    },
+    {
+      id: "2",
+      name: "Upper Limb (UL) - Left",
+      region: "Upper Limb - Left", // Example region name
+    },
+    {
+      id: "3",
+      name: "Torso",
+      region: "Torso", // Example region name
+    },
+    // Add more templates with regions as needed or use a robust more dynamic store
+  ];
+
+  //Pre-filtering based on Region update the rendering of your diagram templates based on the selected region and show only those templates that match the selected region
+  const filterTemplatesByRegion = (templates, selectedRegion) => {
+    if (!selectedRegion) {
+      return templates; // Return all templates if no region is selected
+    }
+
+    return templates.filter((template) => template.region === selectedRegion);
+  };
+
+  useEffect(() => {
+    // Replace this with your actual data fetching logic
+    const fetchDiagramTemplates = async () => {
+      try {
+        const response = await fetch("api-endpoint-for-templates");
+        const data = await response.json();
+        setDiagramTemplates(data);
+      } catch (error) {
+        console.error("Error fetching diagram templates:", error);
+      }
+    };
+
+    fetchDiagramTemplates();
+  }, []);
+
+  function handleTemplateSelect(template: DiagramTemplate): void {
+    setSelectedTemplate(template);
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div>
       <div ref={drawingWidgetRef} id="drawing-widget">
@@ -64,6 +139,22 @@ const DrawPage: React.FC = () => {
           imagesData={activeImage ? [activeImage] : []}
           onExit={handleSaveAnnotations}
           drawingWidgetRef={drawingWidgetRef}
+        />
+
+        <DiagramTemplateDropdown
+          diagramTemplates={filterTemplatesByRegion(
+            exampleDiagramTemplates,
+            selectedRegion
+          )} // Replace with your data
+          onSelectTemplate={handleTemplateSelect}
+        />
+
+        <DiagramTable
+          savedDiagrams={savedDiagrams}
+          onPageChange={undefined}
+          currentPage={undefined}
+          pageSize={undefined}
+          totalItems={undefined}
         />
       </div>
     </div>
