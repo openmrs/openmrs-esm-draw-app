@@ -1,8 +1,8 @@
 export enum RegionClass {
-  ALPHA = "Alpha",
-  BETA = "Beta",
-  CHARLIE = "Charlie",
-  DELTA = "Delta",
+  ALPHA = "Pain",
+  BETA = "Wounded",
+  CHARLIE = "Injury",
+  DELTA = "Entry",
 }
 
 export enum RegionTag {

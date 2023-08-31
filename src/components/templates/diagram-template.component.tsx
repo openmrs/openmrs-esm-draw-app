@@ -27,7 +27,7 @@ const DiagramTemplateDropdown: React.FC<DiagramTemplateDropdownProps> = ({
   return (
     <Dropdown
       id="diagram-template-dropdown"
-      label="Select Diagram Template"
+      label="Select Category name"
       items={diagramTemplates}
       selectedItem={selectedTemplate}
       itemToString={(item) => (item ? item.name : "")}
