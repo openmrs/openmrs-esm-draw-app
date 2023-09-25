@@ -1,0 +1,42 @@
+/* Define styles for the canvas container */
+canvas {
+  border: 2px solid #ccc; /* Add a border to the canvas */
+  display: block; /* Make the canvas a block-level element */
+  margin: 0 auto; /* Center the canvas horizontally */
+}
+
+/* Define styles for the buttons container */
+.buttons {
+  margin-top: 20px; /* Add some top margin to the buttons */
+}
+
+/* Define styles for the drawing buttons */
+button {
+  margin-right: 10px; /* Add right margin between buttons */
+  padding: 8px 16px; /* Add padding to buttons */
+  font-size: 16px; /* Set font size */
+  background-color: #007bff; /* Button background color */
+  color: #fff; /* Button text color */
+  border: none; /* Remove button border */
+  border-radius: 4px; /* Add button border radius */
+  cursor: pointer; /* Change cursor on hover */
+}
+
+button:hover {
+  background-color: #0056b3; /* Change background color on hover */
+}
+
+/* Define styles for the color input */
+input[type="color"] {
+  margin-right: 10px; /* Add right margin to the color input */
+}
+
+/* Define styles for the undo and redo buttons */
+button.undo, button.redo {
+  background-color: #6c757d; /* Button background color */
+}
+
+/* Define styles for the file input */
+input[type="file"] {
+  display: inline-block; /* Hide the file input */
+}

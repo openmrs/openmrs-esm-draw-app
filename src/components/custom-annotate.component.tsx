@@ -1,0 +1,264 @@
+import React, { useEffect, useRef, useState } from "react";
+import { fabric } from "fabric";
+import "./custom-annotate.style.css"; // Import your CSS file for styling
+
+import { Button } from "@carbon/react";
+import { createAttachment } from "../attachments/attachments.resource";
+import { readFileAsString } from "../utils";
+
+const SvgEditor = () => {
+  const canvasRef = useRef(null);
+  const [canvas, setCanvas] = useState(null);
+  const [drawingMode, setDrawingMode] = useState("rectangle");
+  const [stateHistory, setStateHistory] = useState([]);
+  const [currentStatePointer, setCurrentStatePointer] = useState(-1);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 });
+  const [imageObject, setImageObject] = useState(null);
+  const [originalImage, setOriginalImage] = useState(null); // State to store the original image object
+  useEffect(() => {
+    const options = {
+      width: window.innerWidth, // Set canvas width to window width
+      height: window.innerHeight, // Set canvas height to window height
+    };
+    const newCanvas = new fabric.Canvas(canvasRef.current, options);
+    setCanvas(newCanvas);
+
+    newCanvas.on("mouse:down", handleMouseDown);
+    newCanvas.on("mouse:move", handleMouseMove);
+    newCanvas.on("mouse:up", handleMouseUp);
+
+    saveCanvasState();
+
+    return () => {
+      newCanvas.dispose();
+    };
+  }, []);
+
+  const selectDrawingMode = (mode) => {
+    setDrawingMode(mode);
+    canvas.isDrawingMode = mode === "freehand";
+  };
+
+  const addShape = () => {
+    let shape;
+    if (drawingMode === "rectangle") {
+      shape = new fabric.Rect({
+        width: 100,
+        height: 50,
+        fill: "transparent",
+        stroke: "blue",
+        strokeWidth: 2,
+        left: 100,
+        top: 100,
+      });
+    } else if (drawingMode === "circle") {
+      shape = new fabric.Circle({
+        radius: 25,
+        fill: "transparent",
+        stroke: "red",
+        strokeWidth: 2,
+        left: 200,
+        top: 200,
+      });
+    }
+    if (shape) {
+      canvas.add(shape);
+      // Ensure the shape is always at the front
+      shape.bringToFront();
+      saveCanvasState();
+    }
+  };
+
+  const addText = () => {
+    const text = new fabric.IText("Type your text here", {
+      left: 300,
+      top: 300,
+      fill: "black",
+    });
+    canvas.add(text);
+    // Ensure the text is always at the front
+    text.bringToFront();
+    saveCanvasState();
+  };
+
+  const changeColor = (color) => {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      activeObject.set({ fill: color });
+      canvas.renderAll();
+      saveCanvasState();
+    }
+  };
+
+  const handleMouseDown = (event) => {
+    if (drawingMode === "freehand") {
+      setIsDrawing(true);
+      const { offsetX, offsetY } = event.e;
+      setLastPosition({ x: offsetX, y: offsetY });
+    }
+  };
+
+  const handleMouseMove = (event) => {
+    if (isDrawing) {
+      const { offsetX, offsetY } = event.e;
+      const path = new fabric.Path(
+        `M ${lastPosition.x} ${lastPosition.y} L ${offsetX} ${offsetY}`,
+        {
+          stroke: "blue",
+          strokeWidth: 2,
+          fill: "transparent",
+        }
+      );
+      canvas.add(path);
+      setLastPosition({ x: offsetX, y: offsetY });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDrawing(false);
+    saveCanvasState();
+  };
+
+  const saveCanvasState = () => {
+    const canvasState = JSON.stringify(canvas);
+    const newHistory = [
+      ...stateHistory.slice(0, currentStatePointer + 1),
+      canvasState,
+    ];
+    setStateHistory(newHistory);
+    setCurrentStatePointer(newHistory.length - 1);
+  };
+
+  const undo = () => {
+    if (currentStatePointer > 0) {
+      const newPointer = currentStatePointer - 1;
+      const canvasState = stateHistory[newPointer];
+      setCurrentStatePointer(newPointer);
+      canvas.loadFromJSON(canvasState, () => {
+        canvas.renderAll();
+      });
+    }
+  };
+
+  const redo = () => {
+    if (currentStatePointer < stateHistory.length - 1) {
+      const newPointer = currentStatePointer + 1;
+      const canvasState = stateHistory[newPointer];
+      setCurrentStatePointer(newPointer);
+      canvas.loadFromJSON(canvasState, () => {
+        canvas.renderAll();
+      });
+    }
+  };
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        // Remove the original image if it exists
+        if (originalImage) {
+          canvas.remove(originalImage);
+        }
+        // Load the image and add it to the canvas
+        fabric.Image.fromURL(e.target.result, (img) => {
+          // Center the image on the canvas
+          img.set({
+            left: canvas.width / 2,
+            top: canvas.height / 2,
+            draggable: true,
+          });
+
+          // Add the image to the canvas
+          canvas.add(img);
+          setOriginalImage(img);
+
+          // Bring the image to the front of the stacking order
+          img.bringToFront();
+          // Set the imageObject state
+          setImageObject(img);
+          canvas.renderAll();
+          saveCanvasState();
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const saveAnnotatedImage = async () => {
+    const patientUuid = "ac64588b-9376-4ef4-b87f-13782647b4c8";
+    // Check if an image object exists
+    if (imageObject) {
+      // Get the original image object
+      const originalImage = canvas.getObjects("image")[0];
+
+      // Capture only the part of the canvas containing the original image and annotations as a data URL
+      const annotatedCanvasDataUrl = canvas.toDataURL({
+        format: "png",
+        left: originalImage.left,
+        top: originalImage.top,
+        width: originalImage.width,
+        height: originalImage.height,
+      });
+
+      // Convert the data URL to a Blob
+      const blob = await fetch(annotatedCanvasDataUrl).then((res) =>
+        res.blob()
+      );
+
+      // Create a File from the Blob (you can use the patientUuid as the filename)
+      const fileName = `${patientUuid}_annotated_image.png`;
+      const fileType = "image/png";
+      const fileDescription = "Annotated Image";
+
+      const file = new File([blob], fileName, { type: fileType });
+
+      // Read the file content as base64
+      const base64Content = await readFileAsString(file);
+
+      // Use createAttachment method to save the annotated image
+      await createAttachment(patientUuid, {
+        file,
+        fileName,
+        fileType,
+        fileDescription,
+        base64Content,
+      });
+    }
+    // TODO: Use the openmrs framework notification
+    alert("Annotated image saved successfully!");
+  };
+
+  return (
+    <div className="container">
+      <div className="side-panel">
+        <div className="tool-group">
+          <Button onClick={() => selectDrawingMode("rectangle")}>
+            Rectangle
+          </Button>
+          <Button onClick={() => selectDrawingMode("circle")}>Circle</Button>
+          <Button onClick={() => selectDrawingMode("freehand")}>
+            Freehand
+          </Button>
+          <Button onClick={addShape}>Add Shape</Button>
+          <Button onClick={addText}>Add Text</Button>
+          <input
+            type="color"
+            onChange={(e) => changeColor(e.target.value)}
+            style={{ width: "30px", height: "30px" }}
+          />
+          <Button onClick={undo}>Undo</Button>
+          <Button onClick={redo}>Redo</Button>
+          <input type="file" accept="image/*" onChange={handleImageUpload} />
+          <Button onClick={saveAnnotatedImage}>Save</Button>
+        </div>
+      </div>
+      <div className="canvas-container">
+        <canvas ref={canvasRef} width="100%" height="100%" />
+      </div>
+    </div>
+  );
+};
+
+export default SvgEditor;
