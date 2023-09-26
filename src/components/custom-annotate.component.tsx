@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
-import "./custom-annotate.style.css"; // Import your CSS file for styling
-
+import "./custom-annotate.scss"; // Import your CSS file for styling
+import { showToast } from "@openmrs/esm-framework";
 import { Button } from "@carbon/react";
 import { createAttachment } from "../attachments/attachments.resource";
 import { readFileAsString } from "../utils";
@@ -187,6 +187,7 @@ const SvgEditor = () => {
   };
 
   const saveAnnotatedImage = async () => {
+    // TODO: make this dynamic not hard coded
     const patientUuid = "ac64588b-9376-4ef4-b87f-13782647b4c8";
     // Check if an image object exists
     if (imageObject) {
@@ -218,16 +219,32 @@ const SvgEditor = () => {
       const base64Content = await readFileAsString(file);
 
       // Use createAttachment method to save the annotated image
-      await createAttachment(patientUuid, {
-        file,
-        fileName,
-        fileType,
-        fileDescription,
-        base64Content,
-      });
+      try {
+        await createAttachment(patientUuid, {
+          file,
+          fileName,
+          fileType,
+          fileDescription,
+          base64Content,
+        });
+
+        // Show success toast on successful image save
+        showToast({
+          description: "Annotated image saved successfully!",
+          title: "Image Saved",
+          kind: "success",
+          critical: true,
+        });
+      } catch (error) {
+        // Show error toast on error
+        showToast({
+          description: "Error saving annotated image",
+          title: "Error",
+          kind: "error",
+          critical: true,
+        });
+      }
     }
-    // TODO: Use the openmrs framework notification
-    alert("Annotated image saved successfully!");
   };
 
   return (
