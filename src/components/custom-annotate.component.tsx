@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import "./custom-annotate.scss"; // Import your CSS file for styling
 import { showToast } from "@openmrs/esm-framework";
-import { Button } from "@carbon/react";
+import { Button, FileUploader } from "@carbon/react";
 import { createAttachment } from "../attachments/attachments.resource";
 import { readFileAsString } from "../utils";
 
@@ -28,7 +28,9 @@ const SvgEditor = () => {
     newCanvas.on("mouse:move", handleMouseMove);
     newCanvas.on("mouse:up", handleMouseUp);
 
-    saveCanvasState();
+    // Clear the state history when the canvas is first created
+    setStateHistory([JSON.stringify(newCanvas)]);
+    setCurrentStatePointer(0);
 
     return () => {
       newCanvas.dispose();
@@ -121,13 +123,16 @@ const SvgEditor = () => {
   };
 
   const saveCanvasState = () => {
-    const canvasState = JSON.stringify(canvas);
-    const newHistory = [
-      ...stateHistory.slice(0, currentStatePointer + 1),
-      canvasState,
-    ];
-    setStateHistory(newHistory);
-    setCurrentStatePointer(newHistory.length - 1);
+    // Only save canvas state if the canvas is defined
+    if (canvas) {
+      const canvasState = JSON.stringify(canvas);
+      const newHistory = [
+        ...stateHistory.slice(0, currentStatePointer + 1),
+        canvasState,
+      ];
+      setStateHistory(newHistory);
+      setCurrentStatePointer(newHistory.length - 1);
+    }
   };
 
   const undo = () => {
@@ -267,8 +272,17 @@ const SvgEditor = () => {
           />
           <Button onClick={undo}>Undo</Button>
           <Button onClick={redo}>Redo</Button>
-          <input type="file" accept="image/*" onChange={handleImageUpload} />
           <Button onClick={saveAnnotatedImage}>Save</Button>
+          <div className="file-uploader-container">
+            <FileUploader
+              accept={[".jpg", ".jpeg", ".png", ".gif"]}
+              buttonLabel="Upload Image"
+              filenameStatus="edit"
+              labelText="Upload Image"
+              onChange={(event) => handleImageUpload(event)}
+              className="file-uploader"
+            />
+          </div>
         </div>
       </div>
       <div className="canvas-container">
