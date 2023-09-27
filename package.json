@@ -45,11 +45,15 @@
   },
   "dependencies": {
     "@carbon/react": "^1.33.0",
-    "lodash-es": "^4.17.21",
-    "react-image-annotate": "^1.8.0"
+    "@openmrs/esm-patient-common-lib": "^5.0.0",
+    "@openmrs/openmrs-form-engine-lib": "latest",
+    "canvas-to-image": "^2.0.3",
+    "fabric": "^5.3.0",
+    "lodash-es": "^4.17.21"
   },
   "peerDependencies": {
     "@openmrs/esm-framework": "*",
+    "@openmrs/esm-patient-common-lib": "5.x",
     "dayjs": "1.x",
     "react": "18.x",
     "react-i18next": "11.x",
