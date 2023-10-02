@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import "./custom-annotate.scss"; // Import your CSS file for styling
 import { showToast } from "@openmrs/esm-framework";
-import { Button, FileUploader } from "@carbon/react";
+import { Button, FileUploader, Modal, TextInput } from "@carbon/react";
 import { createAttachment } from "../attachments/attachments.resource";
 import { readFileAsString } from "../utils";
 
@@ -15,6 +15,8 @@ const SvgEditor = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 });
   const [imageObject, setImageObject] = useState(null);
+  const [isAttachmentModalOpen, setIsAttachmentModalOpen] = useState(false);
+  const [attachmentName, setAttachmentName] = useState(""); // State to store attachment name
   const [originalImage, setOriginalImage] = useState(null); // State to store the original image object
   useEffect(() => {
     const options = {
@@ -191,8 +193,26 @@ const SvgEditor = () => {
     }
   };
 
+  const openAttachmentModal = () => {
+    setIsAttachmentModalOpen(true);
+  };
+
+  const closeAttachmentModal = () => {
+    setIsAttachmentModalOpen(false);
+  };
+
+  const handleSaveButtonClick = () => {
+    // Open the attachment modal when the "Save" button is clicked
+    openAttachmentModal();
+  };
+
+  const handleAttachmentNameChange = (e) => {
+    setAttachmentName(e.target.value);
+  };
+
   const saveAnnotatedImage = async () => {
-    // TODO: make this dynamic not hard coded
+    closeAttachmentModal();
+    // TODO: make this dynamic not hard coded possibly using the usepatient hook
     const patientUuid = "ac64588b-9376-4ef4-b87f-13782647b4c8";
     // Check if an image object exists
     if (imageObject) {
@@ -214,9 +234,14 @@ const SvgEditor = () => {
       );
 
       // Create a File from the Blob (you can use the patientUuid as the filename)
-      const fileName = `${patientUuid}_annotated_image.png`;
+      const fileName = attachmentName
+        ? `${attachmentName}.png`
+        : `${patientUuid}_annotated_image.png`;
+
       const fileType = "image/png";
-      const fileDescription = "Annotated Image";
+      const fileDescription = attachmentName
+        ? `Annotated Image: ${attachmentName}`
+        : "Annotated Image";
 
       const file = new File([blob], fileName, { type: fileType });
 
@@ -272,7 +297,7 @@ const SvgEditor = () => {
           />
           <Button onClick={undo}>Undo</Button>
           <Button onClick={redo}>Redo</Button>
-          <Button onClick={saveAnnotatedImage}>Save</Button>
+          <Button onClick={handleSaveButtonClick}>Save</Button>
           <div className="file-uploader-container">
             <FileUploader
               accept={[".jpg", ".jpeg", ".png", ".gif"]}
@@ -288,6 +313,22 @@ const SvgEditor = () => {
       <div className="canvas-container">
         <canvas ref={canvasRef} width="100%" height="100%" />
       </div>
+      {/* Attachment Name Modal */}
+      <Modal
+        open={isAttachmentModalOpen}
+        modalLabel="Enter Attachment Name"
+        primaryButtonText="Add attachmnet"
+        secondaryButtonText="Cancel"
+        onRequestClose={closeAttachmentModal}
+        onRequestSubmit={saveAnnotatedImage}
+      >
+        <TextInput
+          id="attachmentNameInput"
+          labelText="Attachment Name"
+          value={attachmentName}
+          onChange={handleAttachmentNameChange}
+        />
+      </Modal>
     </div>
   );
 };
