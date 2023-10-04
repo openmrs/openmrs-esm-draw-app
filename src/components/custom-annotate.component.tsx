@@ -2,7 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import "./custom-annotate.scss"; // Import your CSS file for styling
 import { showToast } from "@openmrs/esm-framework";
-import { Button, FileUploader, Modal, TextInput } from "@carbon/react";
+import { Button, FileUploader, Modal, TextInput, Header } from "@carbon/react";
+import {
+  ShapeExclude,
+  CircleStroke,
+  Draw,
+  WatsonHealthTextAnnotationToggle,
+  Undo,
+  Redo,
+  ColorPalette,
+} from "@carbon/react/icons"; // Import the icons you want to use
 import { createAttachment } from "../attachments/attachments.resource";
 import { readFileAsString } from "../utils";
 
@@ -18,6 +27,9 @@ const SvgEditor = () => {
   const [isAttachmentModalOpen, setIsAttachmentModalOpen] = useState(false);
   const [attachmentName, setAttachmentName] = useState(""); // State to store attachment name
   const [originalImage, setOriginalImage] = useState(null); // State to store the original image object
+
+  const colorPickerRef = useRef(null);
+
   useEffect(() => {
     const options = {
       width: window.innerWidth, // Set canvas width to window width
@@ -278,58 +290,113 @@ const SvgEditor = () => {
   };
 
   return (
-    <div className="container">
-      <div className="side-panel">
-        <div className="tool-group">
-          <Button onClick={() => selectDrawingMode("rectangle")}>
-            Rectangle
-          </Button>
-          <Button onClick={() => selectDrawingMode("circle")}>Circle</Button>
-          <Button onClick={() => selectDrawingMode("freehand")}>
-            Freehand
-          </Button>
-          <Button onClick={addShape}>Add Shape</Button>
-          <Button onClick={addText}>Add Text</Button>
-          <input
-            type="color"
-            onChange={(e) => changeColor(e.target.value)}
-            style={{ width: "30px", height: "30px" }}
-          />
-          <Button onClick={undo}>Undo</Button>
-          <Button onClick={redo}>Redo</Button>
-          <Button onClick={handleSaveButtonClick}>Save</Button>
-          <div className="file-uploader-container">
-            <FileUploader
-              accept={[".jpg", ".jpeg", ".png", ".gif"]}
-              buttonLabel="Upload Image"
-              filenameStatus="edit"
-              labelText="Upload Image"
-              onChange={(event) => handleImageUpload(event)}
-              className="file-uploader"
+    <>
+      <Header
+        aria-label="Global Header"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          marginTop: "75px",
+          zIndex: 1000,
+        }}
+      >
+        <div className="container" style={{ marginTop: "55px" }}>
+          <div className="button-group">
+            <Button onClick={addShape} style={{ margin: "4px" }}>
+              Add Shape
+            </Button>
+            <Button
+              renderIcon={ShapeExclude}
+              onClick={() => selectDrawingMode("rectangle")}
+              style={{ margin: "4px" }}
+            >
+              Rectangle
+            </Button>
+            <Button
+              renderIcon={CircleStroke}
+              onClick={() => selectDrawingMode("circle")}
+              style={{ margin: "4px" }}
+            >
+              Circle
+            </Button>
+            <Button
+              renderIcon={Draw}
+              onClick={() => selectDrawingMode("freehand")}
+              style={{ margin: "4px" }}
+            >
+              Freehand
+            </Button>
+            <Button
+              renderIcon={WatsonHealthTextAnnotationToggle}
+              onClick={() => addText()}
+              style={{ margin: "4px" }}
+            >
+              Add Text
+            </Button>
+            <Button
+              onClick={() => colorPickerRef.current.click()}
+              style={{ margin: "4px" }}
+            >
+              <ColorPalette />
+            </Button>
+            <input
+              type="color"
+              ref={colorPickerRef}
+              style={{ display: "none" }}
+              onChange={(event) => changeColor(event.target.value)}
             />
+
+            <Button renderIcon={Undo} onClick={undo} style={{ margin: "4px" }}>
+              Undo
+            </Button>
+            <Button renderIcon={Redo} onClick={redo} style={{ margin: "4px" }}>
+              Redo
+            </Button>
+            <Button onClick={handleSaveButtonClick} style={{ margin: "4px" }}>
+              Save
+            </Button>
           </div>
         </div>
-      </div>
-      <div className="canvas-container">
-        <canvas ref={canvasRef} width="100%" height="100%" />
-      </div>
-      {/* Attachment Name Modal */}
-      <Modal
-        open={isAttachmentModalOpen}
-        modalLabel="Enter Attachment Name"
-        primaryButtonText="Add attachmnet"
-        secondaryButtonText="Cancel"
-        onRequestClose={closeAttachmentModal}
-        onRequestSubmit={saveAnnotatedImage}
-      >
-        <TextInput
-          id="attachmentNameInput"
-          labelText="Attachment Name"
-          value={attachmentName}
-          onChange={handleAttachmentNameChange}
+        <FileUploader
+          accept={[".jpg", ".jpeg", ".png", ".gif"]}
+          buttonLabel="Upload Image"
+          filenameStatus="edit"
+          labelText="Upload Image"
+          onChange={(event) => handleImageUpload(event)}
+          className="file-uploader"
+          style={{
+            margin: "15px",
+          }}
         />
-      </Modal>
-    </div>
+      </Header>
+      <div
+        style={{
+          marginTop: "72px",
+        }}
+      >
+        <div className="canvas-container">
+          <canvas ref={canvasRef} width="100%" height="100%" />
+        </div>
+        {/* Attachment Name Modal */}
+        <Modal
+          open={isAttachmentModalOpen}
+          modalLabel="Enter Attachment Name"
+          primaryButtonText="Add attachmnet"
+          secondaryButtonText="Cancel"
+          onRequestClose={closeAttachmentModal}
+          onRequestSubmit={saveAnnotatedImage}
+        >
+          <TextInput
+            id="attachmentNameInput"
+            labelText="Attachment Name"
+            value={attachmentName}
+            onChange={handleAttachmentNameChange}
+          />
+        </Modal>
+      </div>
+    </>
   );
 };
 
