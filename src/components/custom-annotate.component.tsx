@@ -363,9 +363,10 @@ const SvgEditor = () => {
           accept={[".jpg", ".jpeg", ".png", ".gif"]}
           buttonLabel="Upload Image"
           filenameStatus="edit"
-          labelText="Upload Image"
+          labeltext="Upload Image"
           onChange={(event) => handleImageUpload(event)}
           className="file-uploader"
+          iconDescription="uploader"
           style={{
             margin: "15px",
           }}

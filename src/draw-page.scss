@@ -1,8 +1,11 @@
-@use '@carbon/styles/scss/spacing';
-@use '@carbon/styles/scss/type';
+@import 'carbon-components/css/carbon-components.css';
 @import '~@openmrs/esm-styleguide/src/vars';
 
-.text {
-  font-size: 0.9rem;
-  padding: 0.5rem;
- }
+.container {
+  padding: 1.5rem;
+  background: $ui-01;
+}
+
+div.bx--tab-content {
+  padding: 0 !important;
+}
