@@ -3451,7 +3451,7 @@ __metadata:
     "@types/webpack-env": ^1.18.1
     "@typescript-eslint/eslint-plugin": ^5.61.0
     "@typescript-eslint/parser": ^5.61.0
-    canvas-to-image: ^2.0.3
+    canvas-to-image: ^2.2.5
     css-loader: ^6.8.1
     eslint: ^8.44.0
     eslint-config-prettier: ^8.8.0
@@ -7501,7 +7501,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"canvas-to-image@npm:^2.0.3":
+"canvas-to-image@npm:^2.2.5":
   version: 2.2.5
   resolution: "canvas-to-image@npm:2.2.5"
   checksum: 0dd407c58c4b47f4918a4f09eb4e1d8a16b2b6eed9e9ea8a3c9e1b8dcab97f72db9fe85009c96faad6999cf3d0fc6a19d7557d886f63f497657f0dfceeec3c98
