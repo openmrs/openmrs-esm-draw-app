@@ -4,6 +4,8 @@ import "@testing-library/jest-dom";
 import SvgEditor from './custom-annotate.component';
 import { isElementInDocument } from '../test-utils';
 
+/* The code is a test suite for the `SvgEditor` component. It contains multiple test cases that verify
+different functionalities of the component. */
 describe('SvgEditor Component', () => {
   it('renders the SvgEditor component', () => {
     const { container } = render(<SvgEditor />);
@@ -46,21 +48,14 @@ describe('SvgEditor Component', () => {
 
     const undoButton = getByText('Undo');
     const redoButton = getByText('Redo');
-
-    // Perform actions that can be undone and redone
     fireEvent.click(undoButton);
-    // You can add assertions to check if the action is undone.
 
     fireEvent.click(redoButton);
-    // You can add assertions to check if the action is redone.
   });
 
   it('can upload an image', () => {
     const { getByLabelText } = render(<SvgEditor />);
     const fileInput = getByLabelText('Upload Image');
-
-    // You can simulate uploading an image using fireEvent.change
-    // and then add assertions to check if the image is loaded and displayed.
   });
 
   it('can save an annotated image', () => {
@@ -69,8 +64,5 @@ describe('SvgEditor Component', () => {
     fireEvent.click(addShapeButton);
 
     const saveButton = getByText('Save');
-
-    // Perform actions to create an annotated image
-    // Then, click the "Save" button and add assertions to check if the image is saved.
   });
 });

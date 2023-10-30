@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
-import "./custom-annotate.scss"; // Import your CSS file for styling
+import "./custom-annotate.scss";
 import { showToast } from "@openmrs/esm-framework";
 import { Button, FileUploader, Modal, TextInput, Header } from "@carbon/react";
 import {
@@ -11,7 +11,7 @@ import {
   Undo,
   Redo,
   ColorPalette,
-} from "@carbon/react/icons"; // Import the icons you want to use
+} from "@carbon/react/icons";
 import { createAttachment } from "../attachments/attachments.resource";
 import { readFileAsString } from "../utils";
 
@@ -25,15 +25,14 @@ const SvgEditor = () => {
   const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 });
   const [imageObject, setImageObject] = useState(null);
   const [isAttachmentModalOpen, setIsAttachmentModalOpen] = useState(false);
-  const [attachmentName, setAttachmentName] = useState(""); // State to store attachment name
-  const [originalImage, setOriginalImage] = useState(null); // State to store the original image object
-
+  const [attachmentName, setAttachmentName] = useState("");
+  const [originalImage, setOriginalImage] = useState(null);
   const colorPickerRef = useRef(null);
 
   useEffect(() => {
     const options = {
-      width: window.innerWidth, // Set canvas width to window width
-      height: window.innerHeight, // Set canvas height to window height
+      width: window.innerWidth,
+      height: window.innerHeight,
     };
     const newCanvas = new fabric.Canvas(canvasRef.current, options);
     setCanvas(newCanvas);
@@ -41,8 +40,6 @@ const SvgEditor = () => {
     newCanvas.on("mouse:down", handleMouseDown);
     newCanvas.on("mouse:move", handleMouseMove);
     newCanvas.on("mouse:up", handleMouseUp);
-
-    // Clear the state history when the canvas is first created
     setStateHistory([JSON.stringify(newCanvas)]);
     setCurrentStatePointer(0);
 
@@ -80,7 +77,6 @@ const SvgEditor = () => {
     }
     if (shape) {
       canvas.add(shape);
-      // Ensure the shape is always at the front
       shape.bringToFront();
       saveCanvasState();
     }
@@ -93,7 +89,6 @@ const SvgEditor = () => {
       fill: "black",
     });
     canvas.add(text);
-    // Ensure the text is always at the front
     text.bringToFront();
     saveCanvasState();
   };
@@ -137,7 +132,6 @@ const SvgEditor = () => {
   };
 
   const saveCanvasState = () => {
-    // Only save canvas state if the canvas is defined
     if (canvas) {
       const canvasState = JSON.stringify(canvas);
       const newHistory = [
@@ -176,26 +170,18 @@ const SvgEditor = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        // Remove the original image if it exists
         if (originalImage) {
           canvas.remove(originalImage);
         }
-        // Load the image and add it to the canvas
         fabric.Image.fromURL(e.target.result, (img) => {
-          // Center the image on the canvas
           img.set({
             left: canvas.width / 2,
             top: canvas.height / 2,
             draggable: true,
           });
-
-          // Add the image to the canvas
           canvas.add(img);
           setOriginalImage(img);
-
-          // Bring the image to the front of the stacking order
           img.bringToFront();
-          // Set the imageObject state
           setImageObject(img);
           canvas.renderAll();
           saveCanvasState();
@@ -214,7 +200,6 @@ const SvgEditor = () => {
   };
 
   const handleSaveButtonClick = () => {
-    // Open the attachment modal when the "Save" button is clicked
     openAttachmentModal();
   };
 
@@ -226,12 +211,8 @@ const SvgEditor = () => {
     closeAttachmentModal();
     // TODO: make this dynamic not hard coded possibly using the usepatient hook
     const patientUuid = "ac64588b-9376-4ef4-b87f-13782647b4c8";
-    // Check if an image object exists
     if (imageObject) {
-      // Get the original image object
       const originalImage = canvas.getObjects("image")[0];
-
-      // Capture only the part of the canvas containing the original image and annotations as a data URL
       const annotatedCanvasDataUrl = canvas.toDataURL({
         format: "png",
         left: originalImage.left,
@@ -240,12 +221,10 @@ const SvgEditor = () => {
         height: originalImage.height,
       });
 
-      // Convert the data URL to a Blob
       const blob = await fetch(annotatedCanvasDataUrl).then((res) =>
         res.blob()
       );
 
-      // Create a File from the Blob (you can use the patientUuid as the filename)
       const fileName = attachmentName
         ? `${attachmentName}.png`
         : `${patientUuid}_annotated_image.png`;
@@ -256,11 +235,8 @@ const SvgEditor = () => {
         : "Annotated Image";
 
       const file = new File([blob], fileName, { type: fileType });
-
-      // Read the file content as base64
       const base64Content = await readFileAsString(file);
 
-      // Use createAttachment method to save the annotated image
       try {
         await createAttachment(patientUuid, {
           file,
@@ -269,8 +245,6 @@ const SvgEditor = () => {
           fileDescription,
           base64Content,
         });
-
-        // Show success toast on successful image save
         showToast({
           description: "Annotated image saved successfully!",
           title: "Image Saved",
@@ -278,7 +252,6 @@ const SvgEditor = () => {
           critical: true,
         });
       } catch (error) {
-        // Show error toast on error
         showToast({
           description: "Error saving annotated image",
           title: "Error",

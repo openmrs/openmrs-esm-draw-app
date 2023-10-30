@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import SvgEditor from "./components/custom-annotate.component"; // Update the import path
-import "./draw-page.scss"; // Import the CSS file
+import SvgEditor from "./components/custom-annotate.component";
+import "./draw-page.scss";
 
 const DrawPage: React.FC = () => {
   const drawingWidgetRef = useRef<HTMLDivElement>(null);
@@ -12,7 +12,6 @@ const DrawPage: React.FC = () => {
         className="editor-container"
         id="drawing-widget"
       >
-        {/* Render SvgEditor component */}
         <SvgEditor />
       </div>
     </div>
