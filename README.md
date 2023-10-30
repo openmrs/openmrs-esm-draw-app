@@ -2,7 +2,7 @@
 
 # OpenMRS ESM Draw app
 
-This is an OpenMRS frontend module for annotating clinical images. It is built using the [O3 Framework](https://o3-docs.vercel.app/docs) and leverages the [react-image-annotate](https://github.com/UniversalDataTool/react-image-annotate) library.
+This is an OpenMRS frontend module for annotating clinical images. It is built using the [O3 Framework](https://o3-docs.vercel.app/docs) and leverages a custom svg editor.
 
 Read the related [OpenMRS Talk post](https://talk.openmrs.org/t/gsoc-2023-o3-draw-on-body-diagram-app-project-updates-discussion/39544) for some background on this project.
 
