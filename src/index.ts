@@ -1,10 +1,10 @@
-import { getAsyncLifecycle, defineConfigSchema } from "@openmrs/esm-framework";
+import { defineConfigSchema, getAsyncLifecycle } from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
 
 const moduleName = "@openmrs/esm-draw-app";
 
 const options = {
-  featureName: "hello-world",
+  featureName: "draw",
   moduleName,
 };
 
@@ -12,7 +12,7 @@ export const importTranslation = require.context(
   "../translations",
   false,
   /.json$/,
-  "lazy"
+  "lazy",
 );
 
 export function startupApp() {
@@ -20,6 +20,16 @@ export function startupApp() {
 }
 
 export const root = getAsyncLifecycle(
-  () => import("./root.component"),
-  options
+  () => import("./draw-page.component"),
+  options,
+);
+
+export const drawAnnotateButton = getAsyncLifecycle(
+  () => import("./draw-app-link.component"),
+  options,
+);
+
+export const drawAnnotateWorkspace = getAsyncLifecycle(
+  () => import("./draw-page.component"),
+  options,
 );

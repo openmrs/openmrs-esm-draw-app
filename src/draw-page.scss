@@ -1,0 +1,591 @@
+@use '@carbon/colors';
+@use '@carbon/layout';
+@use '@carbon/type';
+
+// Container
+.container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 48px);
+  background-color: colors.$gray-10;
+  position: relative;
+}
+
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 48px);
+  background-color: colors.$gray-10;
+}
+
+.errorNotification {
+  margin: 0;
+  max-width: none;
+  border-radius: 0;
+}
+
+// Header
+.header {
+  background-color: colors.$white;
+  border-bottom: 1px solid colors.$gray-20;
+  padding: layout.$spacing-03 layout.$spacing-05;
+  flex-shrink: 0;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-04;
+}
+
+.title {
+  @include type.type-style('heading-03');
+  color: colors.$gray-100;
+  margin: 0;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-04;
+
+  :global(.cds--file) {
+    margin-bottom: 0;
+  }
+
+  :global(.cds--label-description) {
+    display: none;
+  }
+}
+
+// Main content
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+// Work area with sidebar and canvas
+.workArea {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+// Left sidebar for template selection and metadata
+.sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--cds-layer-01);
+  border-right: 1px solid var(--cds-border-subtle-01);
+  overflow-y: auto;
+  
+  @media (max-width: 1024px) {
+    width: 280px;
+  }
+  
+  @media (max-width: 768px) {
+    display: none; // Hide on mobile, could add toggle button
+  }
+}
+
+// Toolbar
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: layout.$spacing-03;
+  background-color: colors.$white;
+  border-bottom: 1px solid colors.$gray-20;
+  padding: layout.$spacing-03 layout.$spacing-05;
+  margin: 0 layout.$spacing-07;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  min-height: 48px;
+}
+
+.toolSection {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-02;
+  border-right: 1px solid colors.$gray-20;
+  padding-right: layout.$spacing-03;
+  padding-left: layout.$spacing-03;
+
+  &:first-of-type {
+    padding-left: 0;
+  }
+
+  &:last-of-type {
+    border-right: none;
+    padding-right: 0;
+  }
+}
+
+.sectionHeader {
+  display: none;
+}
+
+.toolGrid {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-02;
+  padding: 0;
+}
+
+.toolButton {
+  min-width: 32px;
+  padding: layout.$spacing-02;
+  
+  &:global(.cds--btn--primary) {
+    background-color: colors.$blue-60;
+  }
+  
+  &:global(.cds--btn) {
+    min-height: 32px;
+  }
+}
+
+// Style controls
+.styleControls {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-04;
+  padding: layout.$spacing-03 layout.$spacing-05;
+  background-color: colors.$white;
+  border-bottom: 1px solid colors.$gray-20;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.controlLabel {
+  @include type.type-style('label-01');
+  color: colors.$gray-70;
+  margin-right: layout.$spacing-02;
+  white-space: nowrap;
+}
+
+.colorPresets {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-02;
+}
+
+.colorGrid {
+  display: flex;
+  gap: layout.$spacing-02;
+}
+
+.colorSwatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+
+  &:focus {
+    outline: 2px solid colors.$blue-60;
+    outline-offset: 2px;
+  }
+
+  &.activeColor {
+    box-shadow: 0 0 0 2px colors.$white, 0 0 0 3px colors.$blue-60;
+  }
+}
+
+.sliderControl {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-02;
+}
+
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-02;
+}
+
+.slider {
+  width: 80px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: colors.$gray-30;
+  border-radius: 2px;
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: colors.$blue-60;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+
+  &::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: colors.$blue-60;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+  }
+
+  &:focus {
+    outline: none;
+
+    &::-webkit-slider-thumb {
+      box-shadow: 0 0 0 2px colors.$white, 0 0 0 4px colors.$blue-60;
+    }
+  }
+}
+
+.hiddenInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+// View controls
+.viewControls {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-02;
+  padding: 0;
+}
+
+.zoomControl {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-02;
+}
+
+.zoomValue {
+  @include type.type-style('body-compact-01');
+  color: colors.$gray-70;
+  min-width: 42px;
+  text-align: center;
+  font-size: 12px;
+}
+
+// Shortcuts info
+.shortcutsInfo {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-02;
+  @include type.type-style('helper-text-01');
+  color: colors.$gray-60;
+  padding: layout.$spacing-02 layout.$spacing-03;
+  padding-left: layout.$spacing-03;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    color: colors.$blue-60;
+    background-color: colors.$gray-10;
+    border-radius: 4px;
+  }
+
+  &:focus {
+    outline: 2px solid colors.$blue-60;
+    outline-offset: 2px;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+// Shortcuts modal
+.shortcutsModal {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: layout.$spacing-05;
+  padding: layout.$spacing-03 0;
+}
+
+.shortcutSection {
+  h4 {
+    @include type.type-style('heading-compact-01');
+    color: colors.$gray-100;
+    margin: 0 0 layout.$spacing-03;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: layout.$spacing-02 layout.$spacing-04;
+    margin: 0;
+    align-items: center;
+  }
+
+  dt {
+    @include type.type-style('code-01');
+    color: colors.$gray-70;
+    font-weight: 600;
+
+    kbd {
+      display: inline-block;
+      padding: 2px 6px;
+      background-color: colors.$gray-10;
+      border: 1px solid colors.$gray-30;
+      border-radius: 3px;
+      @include type.type-style('code-01');
+      font-size: 11px;
+      font-weight: 600;
+      box-shadow: 0 1px 0 colors.$gray-30;
+    }
+  }
+
+  dd {
+    @include type.type-style('body-compact-01');
+    color: colors.$gray-70;
+    margin: 0;
+  }
+}
+
+// Style toggle button
+.styleToggle,
+.templateToggle {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-02;
+  padding: layout.$spacing-02 layout.$spacing-03;
+  background: none;
+  border: 1px solid colors.$gray-30;
+  border-radius: 4px;
+  cursor: pointer;
+  color: colors.$gray-70;
+  transition: all 0.15s ease;
+  margin-left: layout.$spacing-03;
+
+  &:hover {
+    background-color: colors.$gray-10;
+    border-color: colors.$gray-40;
+  }
+
+  &:focus {
+    outline: 2px solid colors.$blue-60;
+    outline-offset: 2px;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+// Canvas wrapper
+.canvasWrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: colors.$gray-20;
+  overflow: hidden;
+  padding: layout.$spacing-03;
+}
+
+.canvas {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+// Empty state
+.emptyState {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: colors.$gray-10;
+  z-index: 1;
+}
+
+.emptyStateContent {
+  text-align: center;
+  color: colors.$gray-60;
+  max-width: 320px;
+
+  svg {
+    margin-bottom: layout.$spacing-05;
+    color: colors.$gray-40;
+  }
+
+  h2 {
+    @include type.type-style('heading-03');
+    margin: 0 0 layout.$spacing-03;
+    color: colors.$gray-70;
+  }
+
+  p {
+    @include type.type-style('body-01');
+    margin: 0;
+    color: colors.$gray-60;
+  }
+
+  .supportedFormats {
+    @include type.type-style('helper-text-01');
+    margin-top: layout.$spacing-03;
+    color: colors.$gray-50;
+  }
+}
+
+// Footer
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: colors.$white;
+  border-top: 1px solid colors.$gray-20;
+  padding: layout.$spacing-03 layout.$spacing-05;
+  flex-shrink: 0;
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+}
+
+.statusText {
+  @include type.type-style('helper-text-01');
+  color: colors.$gray-60;
+}
+
+.footerButtons {
+  display: flex;
+  gap: layout.$spacing-03;
+  justify-content: flex-end;
+}
+
+// Modal
+.modalWarning {
+  margin-bottom: layout.$spacing-04;
+}
+
+.modalHint {
+  @include type.type-style('helper-text-01');
+  color: colors.$gray-60;
+  margin-top: layout.$spacing-04;
+}
+
+.downloadOption {
+  margin-top: layout.$spacing-04;
+  padding-top: layout.$spacing-04;
+  border-top: 1px solid colors.$gray-20;
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-03;
+
+  .modalHint {
+    margin-top: 0;
+  }
+}
+
+// Accessibility
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Responsive
+@media (max-width: 1056px) {
+  .toolbar {
+    gap: layout.$spacing-02;
+    padding: layout.$spacing-02 layout.$spacing-04;
+  }
+
+  .toolSection {
+    gap: layout.$spacing-01;
+  }
+  
+  .colorSwatch {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .slider {
+    width: 60px;
+  }
+}
+
+@media (max-width: 672px) {
+  .mainContent {
+    flex-direction: column;
+  }
+
+  .toolbar {
+    flex-wrap: wrap;
+    max-height: none;
+  }
+
+  .toolSection {
+    border-right: none;
+    padding-right: 0;
+    
+    &:not(:last-child)::after {
+      content: '';
+      width: 1px;
+      height: 20px;
+      background-color: colors.$gray-20;
+      margin-left: layout.$spacing-02;
+    }
+  }
+
+  .shortcutsInfo {
+    display: none;
+  }
+
+  .footer {
+    flex-direction: column;
+    gap: layout.$spacing-03;
+  }
+
+  .footerLeft {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .footerButtons {
+    width: 100%;
+    justify-content: center;
+  }
+}
