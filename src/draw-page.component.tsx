@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { fabric } from "fabric";
 import {
@@ -17,16 +11,7 @@ import {
   InlineNotification,
   Tag,
 } from "@carbon/react";
-import {
-  Cursor_1 as Cursor,
-  Pen,
-  PaintBrush,
-  Erase,
-  Save,
-  Reset,
-  Download,
-  Close,
-} from "@carbon/react/icons";
+import { Save, Reset, Download, Close, Undo, Redo, ZoomIn, ZoomOut, FitToScreen } from "@carbon/react/icons";
 import { showToast, usePatient } from "@openmrs/esm-framework";
 import { createAttachment } from "./attachments/attachments.resource";
 import { readFileAsString } from "./utils";
@@ -66,7 +51,6 @@ import {
 } from "./constants/templates.constants";
 import type {
   ToolType,
-  ToolConfig,
   CanvasState,
   ExpandedSections,
 } from "./types/draw-page.types";
@@ -123,10 +107,33 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadedImageName, setLoadedImageName] = useState<string>("");
+  const [imageExtension, setImageExtension] = useState<string>("");
+  
+  // Image name editing
+  const [isEditingImageName, setIsEditingImageName] = useState(false);
+  const [editedImageName, setEditedImageName] = useState("");
+  
+  // Helper functions for filename handling
+  const getFileNameWithoutExtension = (filename: string): string => {
+    const lastDotIndex = filename.lastIndexOf('.');
+    return lastDotIndex > 0 ? filename.substring(0, lastDotIndex) : filename;
+  };
+  
+  const getFileExtension = (filename: string): string => {
+    const lastDotIndex = filename.lastIndexOf('.');
+    return lastDotIndex > 0 ? filename.substring(lastDotIndex) : '';
+  };
+  
+  // Text annotation linking state
+  const [showTextPrompt, setShowTextPrompt] = useState(false);
+  const [pendingShapeForText, setPendingShapeForText] = useState<fabric.Object | null>(null);
+  const [textAnnotation, setTextAnnotation] = useState("");
+  
   const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
     tools: true,
     shapes: true,
-    style: true,
+    style: false,
     actions: true,
     view: true,
   });
@@ -134,40 +141,6 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
   const { patientUuid: contextPatientUuid, isLoading: isPatientLoading } =
     usePatient();
   const patientUuid = propPatientUuid || contextPatientUuid;
-
-  const tools: ToolConfig[] = useMemo(
-    () => [
-      {
-        id: "select",
-        icon: Cursor,
-        label: t("select", "Select"),
-        description: t("selectDesc", "Select and move objects"),
-        category: "selection",
-      },
-      {
-        id: "freehand",
-        icon: Pen,
-        label: t("freehand", "Freehand"),
-        description: t("freehandDesc", "Draw freehand annotations"),
-        category: "drawing",
-      },
-      {
-        id: "highlighter",
-        icon: PaintBrush,
-        label: t("highlighter", "Highlighter"),
-        description: t("highlighterDesc", "Highlight areas of interest"),
-        category: "drawing",
-      },
-      {
-        id: "eraser",
-        icon: Erase,
-        label: t("eraser", "Eraser"),
-        description: t("eraserDesc", "Erase annotations"),
-        category: "drawing",
-      },
-    ],
-    [t],
-  );
 
   useEffect(() => {
     if (!canvasRef.current || !containerRef.current) return;
@@ -237,14 +210,25 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
       "transparent",
       100,
     );
-    addShapeToCanvas(canvas, rect, () =>
+    
+    // Set up listener for when user finishes positioning the shape
+    const onPositioned = () => {
+      canvas.off('mouse:up', onPositioned);
+      // Prompt for text annotation after shape is positioned
+      setPendingShapeForText(rect);
+      setShowTextPrompt(true);
+    };
+    
+    canvas.on('mouse:up', onPositioned);
+    
+    addShapeToCanvas(canvas, rect, () => {
       saveCanvasToHistory(
         canvas,
         setHistory,
         setHistoryIndex,
         historyIndexRef.current,
-      ),
-    );
+      );
+    });
   }, [canvas, strokeColor, strokeWidth]);
 
   const handleAddCircle = useCallback(() => {
@@ -256,14 +240,25 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
       "transparent",
       100,
     );
-    addShapeToCanvas(canvas, circle, () =>
+    
+    // Set up listener for when user finishes positioning the shape
+    const onPositioned = () => {
+      canvas.off('mouse:up', onPositioned);
+      // Prompt for text annotation after shape is positioned
+      setPendingShapeForText(circle);
+      setShowTextPrompt(true);
+    };
+    
+    canvas.on('mouse:up', onPositioned);
+    
+    addShapeToCanvas(canvas, circle, () => {
       saveCanvasToHistory(
         canvas,
         setHistory,
         setHistoryIndex,
         historyIndexRef.current,
-      ),
-    );
+      );
+    });
   }, [canvas, strokeColor, strokeWidth]);
 
   const handleAddArrow = useCallback(() => {
@@ -310,6 +305,67 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
       ),
     );
   }, [canvas, strokeColor]);
+
+  const handleSubmitTextAnnotation = useCallback(() => {
+    if (!canvas || !pendingShapeForText || !textAnnotation.trim()) {
+      setShowTextPrompt(false);
+      setPendingShapeForText(null);
+      setTextAnnotation("");
+      return;
+    }
+
+    // Position text near the shape (to the right and slightly below)
+    const shapeLeft = pendingShapeForText.left || 0;
+    const shapeTop = pendingShapeForText.top || 0;
+    const shapeWidth = (pendingShapeForText.width || 0) * (pendingShapeForText.scaleX || 1);
+    const shapeHeight = (pendingShapeForText.height || 0) * (pendingShapeForText.scaleY || 1);
+
+    const textLeft = shapeLeft + shapeWidth + 20;
+    const textTop = shapeTop + shapeHeight / 2;
+
+    const text = createText(
+      canvas,
+      textAnnotation,
+      strokeColor,
+      fontSize,
+      100,
+    );
+    
+    text.set({
+      left: textLeft,
+      top: textTop,
+    });
+
+    // Store link between shape and text
+    (pendingShapeForText as any).linkedText = text;
+    (text as any).linkedShape = pendingShapeForText;
+
+    addShapeToCanvas(canvas, text, () =>
+      saveCanvasToHistory(
+        canvas,
+        setHistory,
+        setHistoryIndex,
+        historyIndexRef.current,
+      ),
+    );
+
+    // Clear state
+    setShowTextPrompt(false);
+    setPendingShapeForText(null);
+    setTextAnnotation("");
+    canvas.discardActiveObject();
+    canvas.renderAll();
+  }, [canvas, pendingShapeForText, textAnnotation, strokeColor, fontSize]);
+
+  const handleCancelTextAnnotation = useCallback(() => {
+    setShowTextPrompt(false);
+    setPendingShapeForText(null);
+    setTextAnnotation("");
+    if (canvas) {
+      canvas.discardActiveObject();
+      canvas.renderAll();
+    }
+  }, [canvas]);
 
   const handleDelete = useCallback(() => {
     if (!canvas) return;
@@ -414,6 +470,8 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
 
       setIsUploading(true);
       setError(null);
+      setLoadedImageName(file.name);
+      setImageExtension(getFileExtension(file.name));
 
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -545,7 +603,27 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
       setZoomLevel,
     );
     setError(null);
+    setLoadedImageName("");
+    setImageExtension("");
   }, [canvas]);
+
+  const handleEditImageName = useCallback(() => {
+    const nameWithoutExt = getFileNameWithoutExtension(loadedImageName);
+    setEditedImageName(nameWithoutExt);
+    setIsEditingImageName(true);
+  }, [loadedImageName]);
+
+  const handleSaveImageName = useCallback(() => {
+    if (editedImageName.trim()) {
+      setLoadedImageName(editedImageName.trim() + imageExtension);
+    }
+    setIsEditingImageName(false);
+  }, [editedImageName, imageExtension]);
+
+  const handleCancelEditImageName = useCallback(() => {
+    setIsEditingImageName(false);
+    setEditedImageName("");
+  }, []);
 
   const toggleSection = (section: keyof ExpandedSections) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -724,13 +802,50 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
         <div className={styles.headerContent}>
           <div className={styles.headerLeft}>
             <h1 className={styles.title}>
-              {t("clinicalImageAnnotation", "Clinical Image Annotation")}
+              {t("clinicalImageAnnotation", "Image Annotation")}
             </h1>
+            {loadedImageName && (
+              <Tag
+                type="blue"
+                size="sm"
+                className={styles.imageTag}
+                onClick={handleEditImageName}
+                title={t("clickToEdit", "Click to edit name")}
+              >
+                {getFileNameWithoutExtension(loadedImageName)}
+              </Tag>
+            )}
             {hasImage && isModified && (
               <Tag type="blue" size="sm">
                 {t("unsavedChanges", "Unsaved changes")}
               </Tag>
             )}
+          </div>
+          <div className={styles.headerCenter}>
+            <Toolbar
+              activeTool={activeTool}
+              hasImage={hasImage}
+              historyIndex={historyIndex}
+              historyLength={history.length}
+              zoomLevel={zoomLevel}
+              onToolSelect={selectTool}
+              onAddRectangle={handleAddRectangle}
+              onAddCircle={handleAddCircle}
+              onAddArrow={handleAddArrow}
+              onAddText={handleAddText}
+              onAddMeasurement={handleAddMeasurement}
+              onUndo={handleUndo}
+              onRedo={handleRedo}
+              onDelete={handleDelete}
+              onRotateLeft={handleRotateLeft}
+              onRotateRight={handleRotateRight}
+              onDownload={handleExportImage}
+              onZoomIn={handleZoomIn}
+              onZoomOut={handleZoomOut}
+              onFitToScreen={handleFitToScreen}
+              onToggleSection={toggleSection}
+              onToggleTemplates={() => setShowTemplatePanel(true)}
+            />
           </div>
           <div className={styles.headerActions}>
             <FileUploader
@@ -745,7 +860,7 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
               ]}
               buttonKind="tertiary"
               buttonLabel={t("uploadImage", "Upload Image")}
-              filenameStatus="edit"
+              filenameStatus="complete"
               iconDescription={t("uploadImage", "Upload Image")}
               labelTitle=""
               onChange={handleImageUpload}
@@ -773,32 +888,6 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
       </header>
 
       <div className={styles.mainContent}>
-        <Toolbar
-          tools={tools}
-          activeTool={activeTool}
-          hasImage={hasImage}
-          historyIndex={historyIndex}
-          historyLength={history.length}
-          zoomLevel={zoomLevel}
-          expandedSections={expandedSections}
-          onToolSelect={selectTool}
-          onAddRectangle={handleAddRectangle}
-          onAddCircle={handleAddCircle}
-          onAddArrow={handleAddArrow}
-          onAddText={handleAddText}
-          onAddMeasurement={handleAddMeasurement}
-          onUndo={handleUndo}
-          onRedo={handleRedo}
-          onDelete={handleDelete}
-          onRotateLeft={handleRotateLeft}
-          onRotateRight={handleRotateRight}
-          onDownload={handleExportImage}
-          onZoomIn={handleZoomIn}
-          onZoomOut={handleZoomOut}
-          onFitToScreen={handleFitToScreen}
-          onToggleSection={toggleSection}
-          onToggleTemplates={() => setShowTemplatePanel(true)}
-        />
 
         {expandedSections.style && (
           <StyleControls
@@ -831,6 +920,7 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
             canvasRef={canvasRef}
             containerRef={containerRef}
             hasImage={hasImage}
+            onImageUpload={handleImageUpload}
           />
         </div>
 
@@ -852,12 +942,59 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
 
       <footer className={styles.footer}>
         <div className={styles.footerLeft}>
-          {hasImage && (
-            <span className={styles.statusText}>
-              {t("historyStatus", "History")}: {historyIndex + 1}/
-              {history.length} | {t("zoom", "Zoom")}: {zoomLevel}%
-            </span>
-          )}
+          <div className={styles.footerControls}>
+            <Button
+              kind="ghost"
+              size="sm"
+              hasIconOnly
+              renderIcon={ZoomOut}
+              iconDescription={t("zoomOut", "Zoom Out")}
+              tooltipPosition="top"
+              onClick={handleZoomOut}
+              disabled={zoomLevel <= 25}
+            />
+            <span className={styles.zoomLevel}>{zoomLevel}%</span>
+            <Button
+              kind="ghost"
+              size="sm"
+              hasIconOnly
+              renderIcon={ZoomIn}
+              iconDescription={t("zoomIn", "Zoom In")}
+              tooltipPosition="top"
+              onClick={handleZoomIn}
+              disabled={zoomLevel >= 300}
+            />
+            <Button
+              kind="ghost"
+              size="sm"
+              hasIconOnly
+              renderIcon={FitToScreen}
+              iconDescription={t("fitToScreen", "Fit to Screen")}
+              tooltipPosition="top"
+              onClick={handleFitToScreen}
+            />
+            <div className={styles.divider} />
+            <Button
+              kind="ghost"
+              size="sm"
+              hasIconOnly
+              renderIcon={Undo}
+              iconDescription={t("undo", "Undo")}
+              tooltipPosition="top"
+              onClick={handleUndo}
+              disabled={historyIndex <= 0}
+            />
+            <Button
+              kind="ghost"
+              size="sm"
+              hasIconOnly
+              renderIcon={Redo}
+              iconDescription={t("redo", "Redo")}
+              tooltipPosition="top"
+              onClick={handleRedo}
+              disabled={historyIndex >= history.length - 1}
+            />
+          </div>
         </div>
         <ButtonSet className={styles.footerButtons}>
           <Button
@@ -945,6 +1082,62 @@ const DrawPage: React.FC<DrawWorkspaceProps> = ({
             </Button>
           </div>
         )}
+      </Modal>
+
+      {/* Text Annotation Prompt Modal */}
+      <Modal
+        open={showTextPrompt}
+        modalHeading={t("addTextAnnotation", "Add Text Annotation")}
+        primaryButtonText={t("add", "Add")}
+        secondaryButtonText={t("skip", "Skip")}
+        onRequestClose={handleCancelTextAnnotation}
+        onRequestSubmit={handleSubmitTextAnnotation}
+        onSecondarySubmit={handleCancelTextAnnotation}
+        size="xs"
+        preventCloseOnClickOutside
+      >
+        <TextInput
+          id="text-annotation-input"
+          labelText=""
+          placeholder={t(
+            "enterTextAnnotation",
+            "Enter your observation or comment...",
+          )}
+          value={textAnnotation}
+          onChange={(e) => setTextAnnotation(e.target.value)}
+          autoFocus
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && textAnnotation.trim()) {
+              handleSubmitTextAnnotation();
+            }
+          }}
+        />
+      </Modal>
+
+      {/* Edit Image Name Modal */}
+      <Modal
+        open={isEditingImageName}
+        modalHeading={t("editImageName", "Edit Image Name")}
+        primaryButtonText={t("save", "Save")}
+        secondaryButtonText={t("cancel", "Cancel")}
+        onRequestClose={handleCancelEditImageName}
+        onRequestSubmit={handleSaveImageName}
+        onSecondarySubmit={handleCancelEditImageName}
+        size="xs"
+      >
+        <TextInput
+          id="image-name-input"
+          labelText=""
+          placeholder={t("enterImageName", "Enter image name...")}
+          value={editedImageName}
+          onChange={(e) => setEditedImageName(e.target.value)}
+          autoFocus
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && editedImageName.trim()) {
+              handleSaveImageName();
+            }
+          }}
+        />
       </Modal>
     </div>
   );

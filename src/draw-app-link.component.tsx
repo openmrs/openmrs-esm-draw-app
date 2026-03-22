@@ -17,7 +17,7 @@ const DrawAnnotateButton: React.FC<DrawAnnotateButtonProps> = ({
       launchWorkspace("draw-annotate-workspace", {
         workspaceTitle: t(
           "clinicalImageAnnotation",
-          "Clinical Image Annotation",
+          "Image Annotation",
         ),
         patientUuid,
       });

@@ -28,7 +28,7 @@
       "name": "draw-annotate-workspace",
       "component": "drawAnnotateWorkspace",
       "type": "clinical-image-annotation",
-      "title": "Clinical Image Annotation",
+      "title": "Image Annotation",
       "canHide": true,
       "canMaximize": true,
       "width": "wider",

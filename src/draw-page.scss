@@ -34,33 +34,70 @@
 }
 
 .headerContent {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
+  gap: layout.$spacing-05;
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
   gap: layout.$spacing-04;
+  justify-self: start;
 }
 
 .title {
   @include type.type-style('heading-03');
   color: colors.$gray-100;
   margin: 0;
+  white-space: nowrap;
+}
+
+.imageTag {
+  background-color: colors.$blue-10 !important;
+  color: colors.$blue-70 !important;
+  border: 1px solid colors.$blue-20 !important;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: colors.$blue-20 !important;
+    border-color: colors.$blue-30 !important;
+  }
+  
+  @media (max-width: 1056px) {
+    max-width: 150px;
+  }
+}
+
+.headerCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
 }
 
 .headerActions {
   display: flex;
   align-items: center;
   gap: layout.$spacing-04;
+  justify-self: end;
 
   :global(.cds--file) {
     margin-bottom: 0;
   }
 
   :global(.cds--label-description) {
+    display: none;
+  }
+
+  :global(.cds--file-container),
+  :global(.cds--file__selected-file) {
     display: none;
   }
 }
@@ -100,19 +137,43 @@
   }
 }
 
-// Toolbar
+// Toolbar - now embedded in header
 .toolbar {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: layout.$spacing-03;
-  background-color: colors.$white;
-  border-bottom: 1px solid colors.$gray-20;
-  padding: layout.$spacing-03 layout.$spacing-05;
-  margin: 0 layout.$spacing-07;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-  min-height: 48px;
+}
+
+.essentialTools {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: layout.$spacing-03;
+  background: colors.$gray-10;
+  padding: layout.$spacing-03 layout.$spacing-04;
+  border-radius: layout.$spacing-07;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  
+  :global(.cds--overflow-menu) {
+    background: transparent;
+  }
+  
+  :global(.cds--btn) {
+    background: transparent;
+    
+    &:hover {
+      background: colors.$gray-20;
+    }
+    
+    &:global(.cds--btn--primary) {
+      background-color: colors.$blue-60;
+      
+      &:hover {
+        background-color: colors.$blue-70;
+      }
+    }
+  }
 }
 
 .toolSection {
@@ -431,6 +492,16 @@
   justify-content: center;
   background-color: colors.$gray-10;
   z-index: 1;
+  cursor: pointer;
+  transition: background-color 0.11s;
+
+  &:hover {
+    background-color: colors.$gray-20;
+
+    .emptyStateContent svg {
+      color: colors.$blue-60;
+    }
+  }
 }
 
 .emptyStateContent {
@@ -476,6 +547,27 @@
 .footerLeft {
   display: flex;
   align-items: center;
+  gap: layout.$spacing-04;
+}
+
+.footerControls {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-02;
+}
+
+.zoomLevel {
+  @include type.type-style('body-compact-01');
+  color: colors.$gray-70;
+  min-width: 50px;
+  text-align: center;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: colors.$gray-20;
+  margin: 0 layout.$spacing-02;
 }
 
 .statusText {
@@ -530,7 +622,6 @@
 @media (max-width: 1056px) {
   .toolbar {
     gap: layout.$spacing-02;
-    padding: layout.$spacing-02 layout.$spacing-04;
   }
 
   .toolSection {
@@ -545,11 +636,31 @@
   .slider {
     width: 60px;
   }
+
+  .headerContent {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 672px) {
   .mainContent {
     flex-direction: column;
+  }
+
+  .headerContent {
+    grid-template-columns: 1fr;
+    gap: layout.$spacing-03;
+  }
+
+  .headerLeft,
+  .headerCenter,
+  .headerActions {
+    justify-self: stretch;
+    justify-content: center;
   }
 
   .toolbar {
