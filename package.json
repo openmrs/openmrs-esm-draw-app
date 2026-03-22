@@ -26,6 +26,9 @@
       "pre-commit": "pretty-quick --staged && yarn verify"
     }
   },
+  "resolutions": {
+    "webpack": "5.105.3"
+  },
   "browserslist": [
     "extends browserslist-config-openmrs"
   ],
@@ -112,7 +115,7 @@
     "swc-loader": "^0.2.3",
     "swr": "2.2.5",
     "turbo": "^2.5.2",
-    "typescript": "~5.8.3",
+    "typescript": "^5.0.0",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1"
   },

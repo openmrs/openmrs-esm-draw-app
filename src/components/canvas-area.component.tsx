@@ -26,7 +26,8 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleEmptyStateClick = () => {
+  const handleAddIconClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     fileInputRef.current?.click();
   };
 
@@ -34,9 +35,11 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
     <main className={styles.canvasWrapper} ref={containerRef}>
       {!hasImage && (
         <>
-          <div className={styles.emptyState} onClick={handleEmptyStateClick}>
+          <div className={styles.emptyState}>
             <div className={styles.emptyStateContent}>
-              <Add size={64} />
+              <span onClick={handleAddIconClick} style={{ cursor: "pointer" }}>
+                <Add size={64} />
+              </span>
               <h2>{t("noImageLoaded", "No image loaded")}</h2>
               <p>
                 {t(
