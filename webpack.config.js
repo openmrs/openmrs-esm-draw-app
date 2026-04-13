@@ -7,21 +7,9 @@ config.additionalConfig.resolve = {
   },
 };
 
-config.additionalConfig.module = {
-  rules: [
-    {
-      test: /node_modules\/vfile\/core\.js/,
-      use: [
-        {
-          loader: "imports-loader",
-          options: {
-            type: "commonjs",
-            imports: ["single process/browser process"],
-          },
-        },
-      ],
-    },
-  ],
-};
+config.additionalConfig.ignoreWarnings = [
+  /export .* was not found in/,
+  /Critical dependency: the request of a dependency is an expression/,
+];
 
 module.exports = config;

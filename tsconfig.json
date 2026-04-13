@@ -5,6 +5,7 @@
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
     "moduleResolution": "node",
     "lib": [
       "dom",
@@ -14,10 +15,14 @@
       "es2015.promise",
       "es2016.array.include",
       "es2018",
-      "es2020"
+      "es2020",
+      "es2022"
     ],
     "resolveJsonModule": true,
     "noEmit": true,
     "target": "esnext"
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }
