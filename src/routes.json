@@ -4,11 +4,35 @@
     "fhir2": ">=1.2",
     "webservices.rest": "^2.24.0"
   },
-  "extensions": [],
+  "extensions": [
+    {
+      "name": "draw-annotate-link",
+      "slot": "patient-chart-nav-menu",
+      "component": "drawAnnotateButton",
+      "meta": {
+        "title": "Draw/Annotate",
+        "name": "draw-annotate"
+      }
+    }
+  ],
   "pages": [
     {
       "component": "root",
-      "route": "draw"
+      "route": "draw",
+      "online": true,
+      "offline": false
+    }
+  ],
+  "workspaces": [
+    {
+      "name": "draw-annotate-workspace",
+      "component": "drawAnnotateWorkspace",
+      "type": "clinical-image-annotation",
+      "title": "Image Annotation",
+      "canHide": true,
+      "canMaximize": true,
+      "width": "wider",
+      "preferredWindowSize": "maximized"
     }
   ]
 }

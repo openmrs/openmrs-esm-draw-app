@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Compute bundle size differences
         uses: preactjs/compressed-size-action@v2
@@ -18,3 +18,4 @@ jobs:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           minimum-change-threshold: 10000 # 10 KB
           build-script: "turbo run build --color"
+          install-script: "yarn --immutable"

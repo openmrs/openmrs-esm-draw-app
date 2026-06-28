@@ -1,0 +1,137 @@
+@use '@carbon/colors';
+@use '@carbon/layout';
+@use '@carbon/type';
+
+.moreToolsContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.triggerButton {
+  min-height: auto;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  width: 280px;
+  max-height: 500px;
+  background: var(--cds-layer-01);
+  border: 1px solid var(--cds-border-subtle-01);
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.searchContainer {
+  padding: layout.$spacing-03;
+  border-bottom: 1px solid var(--cds-border-subtle-01);
+  flex-shrink: 0;
+
+  :global(.cds--search) {
+    margin-bottom: 0;
+  }
+
+  :global(.cds--search-input) {
+    background: var(--cds-field-01);
+  }
+}
+
+.toolsList {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 420px;
+  padding: layout.$spacing-02 0;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--cds-layer-01);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--cds-border-subtle-01);
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--cds-border-subtle-02);
+    }
+  }
+}
+
+.toolItem {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-04;
+  width: 100%;
+  padding: layout.$spacing-03 layout.$spacing-04;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.11s;
+  color: var(--cds-text-primary);
+
+  &:hover:not(.disabled) {
+    background: var(--cds-layer-hover-01);
+  }
+
+  &:active:not(.disabled) {
+    background: var(--cds-layer-active-01);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.deleteItem {
+    color: var(--cds-support-error);
+
+    &:hover:not(.disabled) {
+      background: colors.$red-10;
+    }
+  }
+}
+
+.toolIcon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+}
+
+.toolLabel {
+  @include type.type-style('body-compact-01');
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.divider {
+  height: 1px;
+  background: var(--cds-border-subtle-01);
+  margin: layout.$spacing-02 0;
+}
+
+.noResults {
+  @include type.type-style('body-compact-01');
+  padding: layout.$spacing-05 layout.$spacing-04;
+  text-align: center;
+  color: var(--cds-text-secondary);
+}
