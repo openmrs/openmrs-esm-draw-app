@@ -27,7 +27,7 @@ jobs:
       - run: yarn verify
       - run: yarn turbo build
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: |
@@ -44,7 +44,7 @@ jobs:
       - run: echo "Uncomment the lines below and delete this one."
       # - uses: actions/checkout@v2
       # - name: Download Artifacts
-      #   uses: actions/download-artifact@v3
+      #   uses: actions/download-artifact@v4
       # - name: Use Node.js
       #   uses: actions/setup-node@v3
       #   with:
@@ -59,7 +59,7 @@ jobs:
       #   env:
       #     NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
       # - name: Upload Artifacts
-      #   uses: actions/upload-artifact@v3
+      #   uses: actions/upload-artifact@v4
       #   with:
       #     name: dist
       #     path: |
@@ -75,7 +75,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
