@@ -12,7 +12,7 @@ export const importTranslation = require.context(
   "../translations",
   false,
   /.json$/,
-  "lazy"
+  "lazy",
 );
 
 export function startupApp() {
@@ -21,5 +21,5 @@ export function startupApp() {
 
 export const root = getAsyncLifecycle(
   () => import("./root.component"),
-  options
+  options,
 );
