@@ -1,5 +1,4 @@
 const config = require("openmrs/default-webpack-config");
-const webpack = require("webpack");
 
 config.additionalConfig.resolve = {
   fallback: {
