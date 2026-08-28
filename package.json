@@ -10,6 +10,7 @@
     "start": "openmrs develop",
     "serve": "webpack serve --mode=development",
     "build": "webpack --mode production",
+    "clean": "git clean -fdX -- dist",
     "analyze": "webpack --mode=production --env analyze=true",
     "lint": "eslint src",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
