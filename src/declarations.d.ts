@@ -1,6 +1,23 @@
-declare module "@carbon/react";
-declare module "*.css";
-declare module "*.scss";
-declare module "*.png";
+declare module '*.scss' {
+  const content: { [className: string]: string };
+  export default content;
+}
 
-declare type SideNavProps = object;
+declare module '*.css' {
+  const content: { [className: string]: string };
+  export default content;
+}
+
+declare interface RequireContext {
+  keys(): string[];
+  (id: string): unknown;
+  <T>(id: string): T;
+  resolve(id: string): string;
+  id: string;
+}
+
+declare namespace NodeJS {
+  interface Require {
+    context(directory: string, useSubdirectories?: boolean, regExp?: RegExp, mode?: string): RequireContext;
+  }
+}

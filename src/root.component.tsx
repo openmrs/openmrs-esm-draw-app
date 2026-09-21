@@ -1,17 +1,13 @@
-import React from "react";
-import styles from "./root.scss";
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Draw from './draw.component';
 
-const Root: React.FC = () => {
-  return (
-    <div className={styles.container}>
-      <h3 className={styles.heading}>OpenMRS Draw App</h3>
-      <p className={styles.content}>
-        <span>
-          This is a an OpenMRS frontend module for annotating clinical images.
-        </span>
-      </p>
-    </div>
-  );
-};
+const Root: React.FC = () => (
+  <BrowserRouter basename={window.getOpenmrsSpaBase()}>
+    <Routes>
+      <Route path="draw" element={<Draw />} />
+    </Routes>
+  </BrowserRouter>
+);
 
 export default Root;

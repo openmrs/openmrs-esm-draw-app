@@ -1,1 +1,4 @@
-{}
+{
+  "welcomeToModule": "Welcome to draw!",
+  "getStarted": "Get started by adding routes, extensions, or components."
+}

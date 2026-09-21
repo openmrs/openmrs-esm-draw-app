@@ -1,6 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-set -e  # die on error
-
-yarn verify
+npm test
