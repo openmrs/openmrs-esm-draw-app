@@ -4,9 +4,9 @@ import { render, screen } from '@testing-library/react';
 import Root from './root.component';
 
 describe('Root', () => {
-  it('mounts the route shell without crashing', () => {
-    // No route matches the default jsdom URL, so the shell mounts but renders
-    // no route content; this asserts the wiring (BrowserRouter + Routes) works.
-    expect(() => render(<Root />)).not.toThrow();
+  it('renders the Draw page at the /draw route', () => {
+    window.history.pushState({}, '', '/openmrs/spa/draw/');
+    render(<Root />);
+    expect(screen.getByRole('heading', { name: 'Draw' }));
   });
 });

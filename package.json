@@ -31,12 +31,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openmrs/openmrs-esm-draw.git"
+    "url": "git+https://github.com/openmrs/openmrs-esm-draw-app.git"
   },
   "bugs": {
-    "url": "https://github.com/openmrs/openmrs-esm-draw/issues"
+    "url": "https://github.com/openmrs/openmrs-esm-draw-app/issues"
   },
-  "homepage": "https://github.com/openmrs/openmrs-esm-draw#readme",
+  "homepage": "https://github.com/openmrs/openmrs-esm-draw-app#readme",
   "publishConfig": {
     "access": "public"
   },
