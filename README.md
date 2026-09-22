@@ -47,8 +47,6 @@ Once started, your module will be available at:
 
 See the [Routing Guide](https://o3-docs.openmrs.org/docs/frontend-modules/routing) for details.
 
-
-
 ### Development commands
 
 ```bash
@@ -99,13 +97,15 @@ If you want `@hooks/*`-style imports, three configs must agree, and the build co
 
 ```js
 const path = require('path');
+const config = require('openmrs/default-rspack-config');
 
-// ...
-resolve: {
+config.additionalConfig.resolve = {
   alias: {
     '@hooks': path.resolve(__dirname, 'src/hooks/'),
   },
-},
+};
+
+module.exports = config;
 ```
 
 Without the build config entry, aliased imports pass type checking and tests but fail `yarn build`. See [openmrs-esm-form-builder](https://github.com/openmrs/openmrs-esm-form-builder) for a working example.
