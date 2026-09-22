@@ -42,3 +42,6 @@ Thumbs.db
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Optional eslint cache
+.eslintcache

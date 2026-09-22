@@ -11,7 +11,7 @@
     "start": "openmrs develop",
     "build": "rspack --mode production",
     "build:development": "rspack --mode development",
-    "analyze": "rspack --mode=production --env.analyze=true",
+    "analyze": "rspack --mode=production --env analyze=true",
     "serve": "rspack serve --mode=development",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest watch",
@@ -20,7 +20,7 @@
     "lint": "eslint src",
     "extract-translations": "i18next 'src/**/*.component.tsx' 'src/**/*.extension.tsx' 'src/**/*.modal.tsx' 'src/**/*.workspace.tsx' 'src/index.ts' --config ./tools/i18next-parser.config.js",
     "prettier": "prettier --config prettier.config.js --write \"src/**/*.{ts,tsx,css,scss}\"",
-    "postinstall": "husky install"
+    "prepare": "husky"
   },
   "keywords": [
     "openmrs",
@@ -69,11 +69,14 @@
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.5.2",
+    "@types/eslint-plugin-jsx-a11y": "^6",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "@vitest/coverage-v8": "^4.1.2",
     "dayjs": "^1.11.13",
     "eslint": "^9.39.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.5.6",
     "husky": "^9.0.11",
     "i18next": "^25.0.0",
     "i18next-parser": "^9.0.1",
