@@ -2,10 +2,12 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "module": "esnext",
+    "target": "es2015",
     "allowSyntheticDefaultImports": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
     "skipLibCheck": true,
-    "moduleResolution": "node",
+    "resolveJsonModule": true,
     "lib": [
       "dom",
       "es5",
@@ -14,10 +16,17 @@
       "es2015.promise",
       "es2016.array.include",
       "es2018",
-      "es2020"
+      "es2020",
+      "es2022",
+      "esnext"
     ],
-    "resolveJsonModule": true,
     "noEmit": true,
-    "target": "esnext"
-  }
+    "noImplicitAny": false,
+    "baseUrl": ".",
+    "paths": {
+      "__mocks__": ["./__mocks__"],
+      "tools": ["./tools"]
+    }
+  },
+  "include": ["src/**/*", "tools/setup-tests.ts", "vitest.config.ts"]
 }
