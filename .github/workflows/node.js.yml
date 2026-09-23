@@ -10,8 +10,8 @@ on:
       - created
 
 env:
-  ESM_NAME: "@openmrs/esm-draw-app"
-  JS_NAME: "openmrs-esm-draw-app.js"
+  ESM_NAME: '@openmrs/esm-draw-app'
+  JS_NAME: 'openmrs-esm-draw-app.js'
 
 jobs:
   build:
@@ -22,10 +22,12 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18.x"
+          node-version: '24.x'
       - run: yarn install --immutable
-      - run: yarn verify
-      - run: yarn turbo build
+      - run: yarn lint
+      - run: yarn typescript
+      - run: yarn test
+      - run: yarn build
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -79,13 +81,13 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18.x"
+          node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install --immutable
       - run: yarn config set npmAuthToken "${NODE_AUTH_TOKEN}" &&  yarn npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-  
+
   deploy:
     runs-on: ubuntu-latest
 
