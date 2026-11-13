@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, TextArea } from '@carbon/react';
 import styles from './annotation-notes.component.scss';
@@ -9,7 +9,6 @@ interface AnnotationNotesProps {
 
 const AnnotationNotes = forwardRef<HTMLTextAreaElement, AnnotationNotesProps>(({ value = '' }, ref) => {
   const [isNotesVisible, setIsNotesVisible] = useState(false);
-  const [notesLocal, setNotesLocal] = useState<string | null>(null);
   const { t } = useTranslation();
 
   return (
@@ -20,16 +19,15 @@ const AnnotationNotes = forwardRef<HTMLTextAreaElement, AnnotationNotesProps>(({
         </Button>
       </div>
 
-      {isNotesVisible && (
+      <div hidden={!isNotesVisible}>
         <TextArea
           ref={ref}
           className={styles.textArea}
           placeholder={t('enterYourNote', 'Enter your note...')}
           labelText=""
-          defaultValue={notesLocal ?? value}
-          onChange={(e) => setNotesLocal(e.target.value)}
+          defaultValue={value}
         />
-      )}
+      </div>
     </div>
   );
 });

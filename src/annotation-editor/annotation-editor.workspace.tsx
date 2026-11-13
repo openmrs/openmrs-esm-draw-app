@@ -34,13 +34,13 @@ const AnnotationEditorWorkspace: React.FC<Workspace2DefinitionProps<AnnotationEd
     const getImgData = getEditedImageDataFuntionRef.current;
     if (!getImgData) return;
 
-    const { imageData } = getImgData({ name: 'annotation', extension: 'png' });
+    const { imageData } = getImgData({});
 
     const mimeType = imageData.mimeType ?? 'image/png';
 
     onSave({
       base64Content: imageData.imageBase64 ?? imageData.imageCanvas?.toDataURL(mimeType) ?? '',
-      fileName: `${imageData.name}.${imageData.extension}`,
+      fileName: `${title ?? imageData.name}.${imageData.extension}`,
       fileType: 'image',
       fileDescription: annotationNotesRef.current?.value ?? '',
       status: 'uploading',

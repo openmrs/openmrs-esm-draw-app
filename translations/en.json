@@ -4,6 +4,9 @@
   "cancel": "Cancel",
   "drawDescription": "Welcome to the Draw page.",
   "drawHeading": "Draw",
+  "enterYourNote": "Enter your note...",
+  "hideNote": "Hide Note",
   "loadingEditor": "Loading editor…",
+  "note": "Note",
   "save": "Save"
 }
