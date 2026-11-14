@@ -1,12 +1,12 @@
 import React from 'react';
 import FilerobotImageEditor, { type FilerobotImageEditorConfig } from 'react-filerobot-image-editor';
 import { DEFAULT_EDITOR_CONFIGS } from './annotation-editor.config';
-import AnnotationNotes from './annotation-notes.component';
+import AnnotationComments from './annotation-comments.component';
 import styles from './annotation-editor.component.scss';
 
 interface AnnotationEditorProps extends FilerobotImageEditorConfig {
-  annotationNotesRef: React.RefObject<HTMLTextAreaElement>;
-  annotationNotes?: string;
+  annotationCommentsRef: React.RefObject<HTMLTextAreaElement>;
+  annotationComments?: string;
 }
 
 const AnnotationEditor: React.FC<AnnotationEditorProps> = ({
@@ -14,8 +14,8 @@ const AnnotationEditor: React.FC<AnnotationEditorProps> = ({
   getCurrentImgDataFnRef,
   savingPixelRatio,
   previewPixelRatio,
-  annotationNotesRef,
-  annotationNotes,
+  annotationCommentsRef,
+  annotationComments,
   ...props
 }) => {
   return (
@@ -29,7 +29,7 @@ const AnnotationEditor: React.FC<AnnotationEditorProps> = ({
         previewPixelRatio={previewPixelRatio}
       />
 
-      <AnnotationNotes ref={annotationNotesRef} value={annotationNotes} />
+      <AnnotationComments ref={annotationCommentsRef} value={annotationComments} />
     </div>
   );
 };

@@ -2,11 +2,11 @@
   "annotate": "Annotate",
   "annotateImage": "Annotate Image",
   "cancel": "Cancel",
+  "comment": "Comment",
   "drawDescription": "Welcome to the Draw page.",
   "drawHeading": "Draw",
-  "enterYourNote": "Enter your note...",
-  "hideNote": "Hide Note",
+  "enterYourComment": "Enter your comment...",
+  "hideComment": "Hide Comment",
   "loadingEditor": "Loading editor…",
-  "note": "Note",
   "save": "Save"
 }

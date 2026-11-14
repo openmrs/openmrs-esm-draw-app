@@ -6,7 +6,7 @@ import styles from './draw.scss';
 const AnnotationEditor = React.lazy(() => import('./annotation-editor/annotation-editor.component'));
 
 const Draw: React.FC = () => {
-  const annotatioNotesRef = useRef<HTMLTextAreaElement>(null);
+  const annotationCommentsRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useTranslation();
 
   return (
@@ -23,8 +23,8 @@ const Draw: React.FC = () => {
             source="https://scaleflex.airstore.io/demo/stephen-walker-unsplash.jpg"
             previewPixelRatio={4}
             savingPixelRatio={window.devicePixelRatio}
-            annotationNotesRef={annotatioNotesRef}
-            annotationNotes={''}
+            annotationCommentsRef={annotationCommentsRef}
+            annotationComments={''}
           />
         </Suspense>
       </div>

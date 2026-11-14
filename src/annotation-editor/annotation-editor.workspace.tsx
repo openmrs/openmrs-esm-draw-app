@@ -11,7 +11,7 @@ const AnnotationEditor = React.lazy(() => import('./annotation-editor.component'
 interface AnnotationEditorWorkspaceProps {
   templateSrc: string;
   annotatedTemplateSrc?: string;
-  annotationNotes?: string;
+  annotationComments?: string;
   title?: string;
   onSave: (annotatedAttachment: AnnotatedAttachment) => void;
 }
@@ -21,12 +21,12 @@ const AnnotationEditorWorkspace: React.FC<Workspace2DefinitionProps<AnnotationEd
   closeWorkspace,
 }) => {
   const getEditedImageDataFuntionRef = useRef<getCurrentImgDataFunction | undefined>(undefined);
-  const annotationNotesRef = useRef<HTMLTextAreaElement>(null);
+  const annotationCommentsRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useTranslation();
 
   if (!workspaceProps) return null;
 
-  const { templateSrc, annotatedTemplateSrc, title, onSave, annotationNotes } = workspaceProps;
+  const { templateSrc, annotatedTemplateSrc, title, onSave, annotationComments } = workspaceProps;
 
   const workspaceTitle = title ? `${t('annotate', 'Annotate')} ${title}` : `${t('annotateImage', 'Annotate Image')}`;
 
@@ -42,7 +42,7 @@ const AnnotationEditorWorkspace: React.FC<Workspace2DefinitionProps<AnnotationEd
       base64Content: imageData.imageBase64 ?? imageData.imageCanvas?.toDataURL(mimeType) ?? '',
       fileName: `${title ?? imageData.name}.${imageData.extension}`,
       fileType: 'image',
-      fileDescription: annotationNotesRef.current?.value ?? '',
+      fileDescription: annotationCommentsRef.current?.value ?? '',
       status: 'uploading',
     });
 
@@ -59,8 +59,8 @@ const AnnotationEditorWorkspace: React.FC<Workspace2DefinitionProps<AnnotationEd
               getCurrentImgDataFnRef={getEditedImageDataFuntionRef}
               savingPixelRatio={1}
               previewPixelRatio={window.devicePixelRatio}
-              annotationNotesRef={annotationNotesRef}
-              annotationNotes={annotationNotes}
+              annotationCommentsRef={annotationCommentsRef}
+              annotationComments={annotationComments}
             />
           </Suspense>
         </div>
