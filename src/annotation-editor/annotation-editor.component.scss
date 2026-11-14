@@ -1,0 +1,14 @@
+@use '@openmrs/esm-styleguide/src/vars' as *;
+
+.editorWrapper {
+  position: relative;
+  height: 100%;
+
+  :global(.FIE_tabs) {
+    display: none;
+  }
+
+  :global(.FIE_canvas-node) {
+    background: $ui-01;
+  }
+}

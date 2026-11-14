@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Layer, Tile } from '@carbon/react';
+import { InlineLoading, Layer, Tile } from '@carbon/react';
 import styles from './draw.scss';
 
+const AnnotationEditor = React.lazy(() => import('./annotation-editor/annotation-editor.component'));
+
 const Draw: React.FC = () => {
+  const annotationCommentsRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useTranslation();
 
   return (
@@ -14,6 +17,17 @@ const Draw: React.FC = () => {
           <p className={styles.content}>{t('drawDescription', 'Welcome to the Draw page.')}</p>
         </Tile>
       </Layer>
+      <div className={styles.editor}>
+        <Suspense fallback={<InlineLoading description={t('loadingEditor', 'Loading editor…')} />}>
+          <AnnotationEditor
+            source="https://scaleflex.airstore.io/demo/stephen-walker-unsplash.jpg"
+            previewPixelRatio={4}
+            savingPixelRatio={window.devicePixelRatio}
+            annotationCommentsRef={annotationCommentsRef}
+            annotationComments={''}
+          />
+        </Suspense>
+      </div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 @use '@carbon/layout';
 @use '@carbon/type';
+@use '@openmrs/esm-styleguide/src/vars' as *;
 
 .container {
   padding: layout.$spacing-05;
@@ -22,4 +23,22 @@
   @include type.type-style('body-01');
   color: var(--cds-text-secondary);
   line-height: 1.5;
+}
+
+.editor {
+  height: 50rem;
+  width: 100%;
+  overflow: hidden;
+
+  > div {
+    height: 100%;
+  }
+
+  :global(.FIE_tabs) {
+    display: none;
+  }
+
+  :global(.FIE_canvas-node) {
+    background: $ui-01;
+  }
 }

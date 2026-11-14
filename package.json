@@ -4,7 +4,7 @@
   "license": "MPL-2.0",
   "description": "draw frontend module for O3",
   "generator": "@openmrs/create-o3-app@1.2.0",
-  "browser": "dist/openmrs-esm-draw.js",
+  "browser": "dist/openmrs-esm-draw-app.js",
   "main": "src/index.ts",
   "source": true,
   "scripts": {
@@ -47,7 +47,10 @@
     "src"
   ],
   "dependencies": {
-    "@carbon/react": "^1.83.0"
+    "@carbon/react": "^1.83.0",
+    "react-filerobot-image-editor": "4.9.1",
+    "react-konva": "18.2.16",
+    "styled-components": "5.3.10"
   },
   "peerDependencies": {
     "@carbon/react": "1.x",
