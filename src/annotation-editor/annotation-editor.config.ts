@@ -3,6 +3,7 @@ import { DEFAULT_SHAPE_CONFIGS, DEFAULT_COLOR, DEFAULT_STROKE_WIDTH } from './an
 import { defaultThemeOverrideConfigs } from './annotation-editor.theme';
 
 export const DEFAULT_EDITOR_CONFIGS: Partial<FilerobotImageEditorConfig> = {
+  useBackendTranslations: false,
   defaultSavedImageName: 'annotation',
   defaultSavedImageType: 'png',
   theme: defaultThemeOverrideConfigs,
