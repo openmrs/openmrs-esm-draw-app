@@ -21,3 +21,10 @@ export const root = getAsyncLifecycle(() => import('./root.component'), options)
 // Modals
 
 // Workspaces
+export const annotationEditorWorkspace = getAsyncLifecycle(
+  () => import('./annotation-editor/annotation-editor.workspace'),
+  {
+    featureName: 'annotation-editor-workspace',
+    moduleName,
+  },
+);

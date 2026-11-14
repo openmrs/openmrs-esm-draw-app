@@ -7,6 +7,19 @@
       "online": true
     }
   ],
-  "extensions": [
+  "workspaces2": [
+    {
+      "name": "annotation-editor-workspace",
+      "component": "annotationEditorWorkspace",
+      "window": "annotation-editor-window"
+    }
+  ],
+  "workspaceWindows2": [
+    {
+      "name": "annotation-editor-window",
+      "group": "patient-chart",
+      "width": "extra-wide",
+      "canMaximize": true
+    }
   ]
 }

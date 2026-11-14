@@ -1,0 +1,31 @@
+@use '@openmrs/esm-styleguide/src/vars' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.editor {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+
+  > div {
+    height: 100%;
+  }
+
+  :global(.FIE_tabs) {
+    display: none;
+  }
+
+  :global(.FIE_canvas-node) {
+    background: $ui-01;
+  }
+}
+
+.controlButtons {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}

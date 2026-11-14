@@ -1,4 +1,9 @@
 {
+  "annotate": "Annotate",
+  "annotateImage": "Annotate Image",
+  "cancel": "Cancel",
   "drawDescription": "Welcome to the Draw page.",
-  "drawHeading": "Draw"
+  "drawHeading": "Draw",
+  "loadingEditor": "Loading editor…",
+  "save": "Save"
 }
